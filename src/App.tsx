@@ -21,13 +21,13 @@ import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { useTheme } from './hooks/useTheme';
 import { SlidersHorizontal, X, RotateCcw, AlertTriangle } from 'lucide-react';
 
-const VERSION_KEY_PREFIX = 'altcost_v0.1.402_';
+const VERSION_KEY_PREFIX = 'altcost_v0.1.403_';
 
 export default function App() {
   const { theme, toggleTheme } = useTheme();
   const [activeTab, setActiveTab] = useState('home');
 
-  // Version-Isolated User Profile (v0.1.402)
+  // Version-Isolated User Profile (v0.1.403)
   const [userProfile, setUserProfile] = useState<UserProfile | null>(() => {
     try {
       const saved = localStorage.getItem(`${VERSION_KEY_PREFIX}user_profile`);
@@ -170,7 +170,7 @@ export default function App() {
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `altcost_v0.1.402_backup_${new Date().toISOString().slice(0, 10)}.json`;
+      link.download = `altcost_v0.1.403_backup_${new Date().toISOString().slice(0, 10)}.json`;
       link.click();
     } else {
       let csv = 'Title,Amount,Frequency,StartDate,CreatedAt,Status\n';
@@ -181,7 +181,7 @@ export default function App() {
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `altcost_v0.1.402_habits_${new Date().toISOString().slice(0, 10)}.csv`;
+      link.download = `altcost_v0.1.403_habits_${new Date().toISOString().slice(0, 10)}.csv`;
       link.click();
     }
   }, [userProfile, expense, historyLogs, customAssets, customGoals]);
@@ -251,7 +251,7 @@ export default function App() {
             </div>
             <h4 className="font-bold text-slate-900 dark:text-white text-base font-display">Confirm Reset App Data?</h4>
             <p className="text-xs text-slate-500">
-              This will permanently clear all tracked habits, custom assets, and settings for v0.1.402.
+              This will permanently clear all tracked habits, custom assets, and settings for v0.1.403.
             </p>
             <div className="flex space-x-2 pt-2">
               <button

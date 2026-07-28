@@ -1,6 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { CalculationSummary } from '../../services/calculationEngine';
 import { ASSET_MODELS } from '../../data/assetDataModel';
+import { MonteCarloVisualizerCard } from './MonteCarloVisualizerCard';
 import { 
   BarChart3, 
   Boxes, 
@@ -10,9 +11,7 @@ import {
   Bitcoin, 
   TrendingUp, 
   Eye, 
-  EyeOff,
-  Percent,
-  Sparkles
+  EyeOff
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -21,8 +20,7 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  CartesianGrid,
-  Legend,
+  CartesianGrid
 } from 'recharts';
 
 interface BenchmarkAnalyticsViewProps {
@@ -78,7 +76,7 @@ export const BenchmarkAnalyticsView: React.FC<BenchmarkAnalyticsViewProps> = ({
               <BarChart3 className="w-5 h-5" />
             </span>
             <h2 className="text-xl font-extrabold text-slate-900 font-display">
-              Benchmark Asset Analytics
+              Benchmark Asset Analytics & Predictive Engine
             </h2>
           </div>
           <p className="text-xs text-slate-500 mt-1">
@@ -98,6 +96,9 @@ export const BenchmarkAnalyticsView: React.FC<BenchmarkAnalyticsViewProps> = ({
           </div>
         )}
       </div>
+
+      {/* Monte Carlo 1,000 Trajectory & Time Horizon Card */}
+      <MonteCarloVisualizerCard summary={summary} currencySymbol={currencySymbol} />
 
       {/* Main Recharts Visualizer Canvas */}
       <div className="light-card p-6 bg-white border border-slate-200/80 space-y-4">
