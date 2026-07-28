@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, memo } from 'react';
 import {
   ResponsiveContainer,
   AreaChart,
@@ -7,7 +7,6 @@ import {
   YAxis,
   Tooltip,
   CartesianGrid,
-  Legend,
 } from 'recharts';
 import { TimelinePoint } from '../../services/calculationEngine';
 import { ASSET_MODELS } from '../../data/assetDataModel';
@@ -17,7 +16,7 @@ interface AssetVisualizerChartProps {
   timeline: TimelinePoint[];
 }
 
-export const AssetVisualizerChart: React.FC<AssetVisualizerChartProps> = ({ timeline }) => {
+export const AssetVisualizerChart: React.FC<AssetVisualizerChartProps> = memo(({ timeline }) => {
   // Visible asset toggles
   const [visibleAssets, setVisibleAssets] = useState<Record<string, boolean>>({
     cumulativeCash: true,
@@ -25,7 +24,7 @@ export const AssetVisualizerChart: React.FC<AssetVisualizerChartProps> = ({ time
     legoValue: true,
     rolexValue: true,
     cardsValue: true,
-    btcValue: false, // Hidden by default to avoid squishing lower curves, toggleable!
+    btcValue: false, // Toggleable
     goldValue: false,
   });
 
@@ -33,7 +32,7 @@ export const AssetVisualizerChart: React.FC<AssetVisualizerChartProps> = ({ time
     setVisibleAssets((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const assetSeriesConfigs = [
+  const assetSeriesConfigs = useMemo(() => [
     { key: 'cumulativeCash', label: 'Cash Spent', color: '#64748b' },
     { key: 'spyValue', label: ASSET_MODELS.spy.name, color: ASSET_MODELS.spy.color },
     { key: 'legoValue', label: ASSET_MODELS.lego.name, color: ASSET_MODELS.lego.color },
@@ -41,7 +40,7 @@ export const AssetVisualizerChart: React.FC<AssetVisualizerChartProps> = ({ time
     { key: 'cardsValue', label: ASSET_MODELS.cards.name, color: ASSET_MODELS.cards.color },
     { key: 'goldValue', label: ASSET_MODELS.gold.name, color: ASSET_MODELS.gold.color },
     { key: 'btcValue', label: ASSET_MODELS.btc.name, color: ASSET_MODELS.btc.color },
-  ];
+  ], []);
 
   const formatCurrency = (val: number) => {
     if (val >= 1000000) return `$${(val / 1000000).toFixed(1)}M`;
@@ -52,10 +51,13 @@ export const AssetVisualizerChart: React.FC<AssetVisualizerChartProps> = ({ time
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="glass-card p-3 rounded-xl border border-slate-700 shadow-2xl text-xs space-y-1.5">
-          <p className="font-bold text-slate-300 border-b border-slate-800 pb-1">Year {label}</p>
+        <div className="glass-card p-3.5 rounded-xl border border-slate-700 shadow-2xl text-xs space-y-1.5 backdrop-blur-xl">
+          <p className="font-bold text-slate-200 border-b border-slate-800 pb-1 flex items-center justify-between">
+            <span>Year {label}</span>
+            <span className="text-[10px] text-slate-500 font-mono">DCA Compounded</span>
+          </p>
           {payload.map((item: any) => (
-            <div key={item.name} className="flex items-center justify-between space-x-4">
+            <div key={item.name} className="flex items-center justify-between space-x-6">
               <span className="flex items-center space-x-1.5 font-medium" style={{ color: item.color }}>
                 <span className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
                 <span>{item.name}:</span>
@@ -108,9 +110,9 @@ export const AssetVisualizerChart: React.FC<AssetVisualizerChartProps> = ({ time
         </div>
       </div>
 
-      {/* Chart Canvas */}
-      <div className="h-80 w-full pt-4">
-        <ResponsiveContainer width="100%" height="100%">
+      {/* Optimized Responsive Chart Canvas */}
+      <div className="h-80 w-full min-w-0 pt-2">
+        <ResponsiveContainer width="100%" height="100%" minWidth={0}>
           <AreaChart data={timeline} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
             <defs>
               {assetSeriesConfigs.map((series) => (
@@ -149,6 +151,8 @@ export const AssetVisualizerChart: React.FC<AssetVisualizerChartProps> = ({ time
                   strokeWidth={2.5}
                   fillOpacity={1}
                   fill={`url(#grad-${series.key})`}
+                  isAnimationActive={true}
+                  animationDuration={800}
                 />
               )
             ))}
@@ -157,4 +161,4 @@ export const AssetVisualizerChart: React.FC<AssetVisualizerChartProps> = ({ time
       </div>
     </div>
   );
-};
+});
