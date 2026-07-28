@@ -84,12 +84,12 @@ jobs:
             dist_electron/*.exe
           draft: false
           prerelease: false
-          name: AltCost v0.1.1 Release
+          name: AltCost ${{ github.ref_name }} Release
           body: |
-            ## 🚀 AltCost Alternative History Asset Comparison Engine - v0.1.1 Full Release
+            ## 🚀 AltCost Alternative History Asset Comparison Engine - ${{ github.ref_name }}
 
             ### 📦 Download Desktop Executable:
-            - **Windows Installer (`AltCost Setup 0.1.1.exe`)**: Standard NSIS desktop installer.
+            - **Windows Installer (`AltCost-Setup-0.1.2.exe`)**: Standard NSIS desktop installer.
 
             ### 🌐 Web Application:
             Access live web build on GitHub Pages.
