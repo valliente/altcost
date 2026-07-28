@@ -1,11 +1,28 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-@layer base {
-  body {
-    @apply bg-[#090d16] text-slate-100 antialiased overflow-x-hidden;
-  }
+@theme {
+  --color-background: #090d16;
+  --color-surface-50: #161e2e;
+  --color-surface-100: #1e293b;
+  --color-surface-200: #2d3748;
+  --color-surface-300: #374151;
+
+  --color-brand-emerald: #10b981;
+  --color-brand-gold: #f59e0b;
+  --color-brand-purple: #8b5cf6;
+  --color-brand-cyan: #06b6d4;
+  --color-brand-rose: #f43f5e;
+  --color-brand-amber: #d97706;
+
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-display: 'Outfit', system-ui, sans-serif;
+}
+
+body {
+  background-color: #090d16;
+  color: #f8fafc;
+  font-family: 'Inter', system-ui, sans-serif;
+  overflow-x: hidden;
 }
 
 .glass-card {
