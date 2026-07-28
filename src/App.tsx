@@ -18,56 +18,58 @@ import { BenchmarkAnalyticsView } from './components/analytics/BenchmarkAnalytic
 import { ExpenseHistoryLogView, ExpenseHistoryEntry } from './components/history/ExpenseHistoryLogView';
 import { CustomAssetCreatorModal } from './components/customAsset/CustomAssetCreatorModal';
 import { useTheme } from './hooks/useTheme';
-import { SlidersHorizontal, X, RotateCcw, PlusCircle, Sparkles } from 'lucide-react';
+import { SlidersHorizontal, X, RotateCcw } from 'lucide-react';
+
+const VERSION_KEY_PREFIX = 'altcost_v0.1.401_';
 
 export default function App() {
   const { theme, toggleTheme } = useTheme();
   const [activeTab, setActiveTab] = useState('home');
 
-  // User Profile
+  // Version-Isolated User Profile (Fresh Install Guarantee for v0.1.401)
   const [userProfile, setUserProfile] = useState<UserProfile | null>(() => {
     try {
-      const saved = localStorage.getItem('altcost_user_profile');
+      const saved = localStorage.getItem(`${VERSION_KEY_PREFIX}user_profile`);
       return saved ? JSON.parse(saved) : null;
     } catch (e) {
       return null;
     }
   });
 
-  // Active Expense State
+  // Version-Isolated Active Expense
   const [expense, setExpense] = useState<ExpenseState | null>(() => {
     try {
-      const saved = localStorage.getItem('altcost_expenses');
+      const saved = localStorage.getItem(`${VERSION_KEY_PREFIX}expenses`);
       return saved ? JSON.parse(saved) : null;
     } catch (e) {
       return null;
     }
   });
 
-  // Custom User-Defined Assets
+  // Version-Isolated Custom Assets
   const [customAssets, setCustomAssets] = useState<AssetConfig[]>(() => {
     try {
-      const saved = localStorage.getItem('altcost_custom_assets');
+      const saved = localStorage.getItem(`${VERSION_KEY_PREFIX}custom_assets`);
       return saved ? JSON.parse(saved) : [];
     } catch (e) {
       return [];
     }
   });
 
-  // History Transaction Logs
+  // Version-Isolated History Logs
   const [historyLogs, setHistoryLogs] = useState<ExpenseHistoryEntry[]>(() => {
     try {
-      const saved = localStorage.getItem('altcost_history_logs');
+      const saved = localStorage.getItem(`${VERSION_KEY_PREFIX}history_logs`);
       return saved ? JSON.parse(saved) : [];
     } catch (e) {
       return [];
     }
   });
 
-  // Custom Goals
+  // Version-Isolated Goals
   const [customGoals, setCustomGoals] = useState<GoalItemData[]>(() => {
     try {
-      const saved = localStorage.getItem('altcost_goals');
+      const saved = localStorage.getItem(`${VERSION_KEY_PREFIX}goals`);
       return saved ? JSON.parse(saved) : [];
     } catch (e) {
       return [];
@@ -82,25 +84,25 @@ export default function App() {
   const [showGoalModal, setShowGoalModal] = useState(false);
   const [showCustomAssetModal, setShowCustomAssetModal] = useState(false);
 
-  // Sync state to localStorage
+  // Sync state to version-isolated localStorage
   useEffect(() => {
-    if (userProfile) localStorage.setItem('altcost_user_profile', JSON.stringify(userProfile));
+    if (userProfile) localStorage.setItem(`${VERSION_KEY_PREFIX}user_profile`, JSON.stringify(userProfile));
   }, [userProfile]);
 
   useEffect(() => {
-    if (expense) localStorage.setItem('altcost_expenses', JSON.stringify(expense));
+    if (expense) localStorage.setItem(`${VERSION_KEY_PREFIX}expenses`, JSON.stringify(expense));
   }, [expense]);
 
   useEffect(() => {
-    localStorage.setItem('altcost_custom_assets', JSON.stringify(customAssets));
+    localStorage.setItem(`${VERSION_KEY_PREFIX}custom_assets`, JSON.stringify(customAssets));
   }, [customAssets]);
 
   useEffect(() => {
-    localStorage.setItem('altcost_history_logs', JSON.stringify(historyLogs));
+    localStorage.setItem(`${VERSION_KEY_PREFIX}history_logs`, JSON.stringify(historyLogs));
   }, [historyLogs]);
 
   useEffect(() => {
-    localStorage.setItem('altcost_goals', JSON.stringify(customGoals));
+    localStorage.setItem(`${VERSION_KEY_PREFIX}goals`, JSON.stringify(customGoals));
   }, [customGoals]);
 
   // Onboarding Complete Handler
@@ -134,7 +136,7 @@ export default function App() {
     setCustomAssets(prev => [...prev, asset]);
   }, []);
 
-  // History Log Action Handlers
+  // History Log Actions
   const handleDeleteHistoryEntry = useCallback((id: string) => {
     setHistoryLogs(prev => prev.filter(l => l.id !== id));
   }, []);
@@ -166,10 +168,9 @@ export default function App() {
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `altcost_backup_${new Date().toISOString().slice(0, 10)}.json`;
+      link.download = `altcost_v0.1.401_backup_${new Date().toISOString().slice(0, 10)}.json`;
       link.click();
     } else {
-      // Export CSV
       let csv = 'Title,Amount,Frequency,StartDate,CreatedAt,Status\n';
       historyLogs.forEach(l => {
         csv += `"${l.title}",${l.amount},${l.frequency},${l.startDate},"${l.createdAt}",${l.isPaused ? 'Paused' : 'Active'}\n`;
@@ -178,7 +179,7 @@ export default function App() {
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `altcost_habits_${new Date().toISOString().slice(0, 10)}.csv`;
+      link.download = `altcost_v0.1.401_habits_${new Date().toISOString().slice(0, 10)}.csv`;
       link.click();
     }
   }, [userProfile, expense, historyLogs, customAssets, customGoals]);
@@ -196,9 +197,14 @@ export default function App() {
     }
   }, []);
 
-  // Reset App Data
+  // Reset App Data (Clears version-isolated keys)
   const handleResetAppData = useCallback(() => {
-    localStorage.clear();
+    localStorage.removeItem(`${VERSION_KEY_PREFIX}user_profile`);
+    localStorage.removeItem(`${VERSION_KEY_PREFIX}expenses`);
+    localStorage.removeItem(`${VERSION_KEY_PREFIX}history_logs`);
+    localStorage.removeItem(`${VERSION_KEY_PREFIX}custom_assets`);
+    localStorage.removeItem(`${VERSION_KEY_PREFIX}goals`);
+
     setUserProfile(null);
     setExpense(null);
     setHistoryLogs([]);
@@ -210,7 +216,7 @@ export default function App() {
     setActiveTab('home');
   }, []);
 
-  // Perform sub-16ms memoized compounding calculation
+  // Memoized Compounding Calculation Engine
   const summary = useMemo(() => {
     if (!expense || expense.amount <= 0) return null;
     return calculateAlternativeHistory(expense, customAssets, reductionPercentage);
@@ -228,7 +234,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#f3f4f8] dark:bg-[#090d16] text-slate-900 dark:text-slate-100 flex overflow-x-hidden font-sans transition-colors duration-200">
-      {/* Onboarding Wizard Modal */}
+      {/* Onboarding Wizard Modal on Fresh Launch */}
       {!userProfile && (
         <OnboardingWizard onCompleteOnboarding={handleCompleteOnboarding} />
       )}
@@ -239,7 +245,7 @@ export default function App() {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
         <div className="flex-1 p-6 md:p-8 max-w-[1600px] w-full mx-auto space-y-5">
-          {/* Header */}
+          {/* Header Bar */}
           <Header
             userName={userProfile?.name || 'User'}
             currencySymbol={currencySym}
@@ -256,7 +262,7 @@ export default function App() {
           {/* TAB 1: DASHBOARD (HOME) */}
           {activeTab === 'home' && (
             <div className="space-y-5">
-              {/* Habit Templates */}
+              {/* Interactive Habit Templates */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="flex-1">
                   <PresetTemplates
@@ -343,7 +349,7 @@ export default function App() {
                 </div>
               )}
 
-              {/* 📊 ROW 1: 4 Cards Grid */}
+              {/* 📊 ROW 1: 4 Vibrant Cards Grid (Preserving Vibrant Light Theme) */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                 <KpiBlueCard
                   totalSpend={summary ? summary.totalCashSpent : 0}

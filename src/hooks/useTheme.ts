@@ -1,13 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
 
 export type ThemeMode = 'light' | 'dark';
+const STORAGE_KEY = 'altcost_v0.1.401_theme';
 
 export function useTheme() {
   const [theme, setTheme] = useState<ThemeMode>(() => {
     try {
-      const saved = localStorage.getItem('altcost_theme');
+      const saved = localStorage.getItem(STORAGE_KEY);
       if (saved === 'dark' || saved === 'light') return saved;
-      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      return 'light'; // Default to vibrant light mode
     } catch (e) {
       return 'light';
     }
@@ -20,7 +21,7 @@ export function useTheme() {
     } else {
       root.classList.remove('dark');
     }
-    localStorage.setItem('altcost_theme', theme);
+    localStorage.setItem(STORAGE_KEY, theme);
   }, [theme]);
 
   const toggleTheme = useCallback(() => {
