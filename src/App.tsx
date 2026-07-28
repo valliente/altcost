@@ -13,6 +13,7 @@ import { HistoricalAltCostComparisonChart } from './components/dashboard/Histori
 import { PaymentsDiversificationRing } from './components/dashboard/PaymentsDiversificationRing';
 import { GoalsCard, GoalItemData } from './components/dashboard/GoalsCard';
 import { ScenarioModelerCard } from './components/dashboard/ScenarioModelerCard';
+import { HabitImpactSummaryCard } from './components/dashboard/HabitImpactSummaryCard';
 import { OnboardingWizard, UserProfile } from './components/onboarding/OnboardingWizard';
 import { BenchmarkAnalyticsView } from './components/analytics/BenchmarkAnalyticsView';
 import { ExpenseHistoryLogView, ExpenseHistoryEntry } from './components/history/ExpenseHistoryLogView';
@@ -21,13 +22,13 @@ import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { useTheme } from './hooks/useTheme';
 import { SlidersHorizontal, X, RotateCcw, AlertTriangle, Trash2 } from 'lucide-react';
 
-const VERSION_KEY_PREFIX = 'altcost_v0.1.404_';
+const VERSION_KEY_PREFIX = 'altcost_v0.1.405_';
 
 export default function App() {
   const { theme, toggleTheme } = useTheme();
   const [activeTab, setActiveTab] = useState('home');
 
-  // Version-Isolated User Profile (v0.1.403)
+  // Version-Isolated User Profile (v0.1.405)
   const [userProfile, setUserProfile] = useState<UserProfile | null>(() => {
     try {
       const saved = localStorage.getItem(`${VERSION_KEY_PREFIX}user_profile`);
@@ -85,6 +86,18 @@ export default function App() {
   const [showGoalModal, setShowGoalModal] = useState(false);
   const [showCustomAssetModal, setShowCustomAssetModal] = useState(false);
   const [showResetConfirmModal, setShowResetConfirmModal] = useState(false);
+
+  // Automated Rolling Backup System
+  const editCountRef = React.useRef(0);
+  useEffect(() => {
+    editCountRef.current += 1;
+    // Save snapshot every 5 state edits
+    if (editCountRef.current >= 5) {
+      const backupData = { userProfile, expense, historyLogs, customAssets, customGoals };
+      localStorage.setItem(`${VERSION_KEY_PREFIX}backup_latest`, JSON.stringify(backupData));
+      editCountRef.current = 0;
+    }
+  }, [userProfile, expense, historyLogs, customAssets, customGoals]);
 
   // Sync state to version-isolated localStorage
   useEffect(() => {
@@ -170,7 +183,7 @@ export default function App() {
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `altcost_v0.1.403_backup_${new Date().toISOString().slice(0, 10)}.json`;
+      link.download = `altcost_v0.1.405_backup_${new Date().toISOString().slice(0, 10)}.json`;
       link.click();
     } else {
       let csv = 'Title,Amount,Frequency,StartDate,CreatedAt,Status\n';
@@ -181,7 +194,7 @@ export default function App() {
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `altcost_v0.1.403_habits_${new Date().toISOString().slice(0, 10)}.csv`;
+      link.download = `altcost_v0.1.405_habits_${new Date().toISOString().slice(0, 10)}.csv`;
       link.click();
     }
   }, [userProfile, expense, historyLogs, customAssets, customGoals]);
@@ -262,7 +275,7 @@ export default function App() {
                 </div>
                 <div>
                   <h4 className="font-bold text-slate-900 dark:text-white text-base font-display">Database Inspector</h4>
-                  <p className="text-xs text-slate-500">v0.1.404 Isolated Storage</p>
+                  <p className="text-xs text-slate-500">v0.1.405 Isolated Storage</p>
                 </div>
               </div>
               <button onClick={() => setShowResetConfirmModal(false)} className="text-slate-400 hover:text-slate-600">
@@ -431,6 +444,13 @@ export default function App() {
                     currencySymbol={currencySym}
                     hasData={hasActiveData}
                   />
+
+                  {hasActiveData && (
+                    <HabitImpactSummaryCard
+                      summary={summary}
+                      currencySymbol={currencySym}
+                    />
+                  )}
 
                   <GoalsCard
                     goals={customGoals}

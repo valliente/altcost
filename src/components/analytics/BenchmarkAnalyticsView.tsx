@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import html2canvas from 'html2canvas';
 import { CalculationSummary } from '../../services/calculationEngine';
 import { ASSET_MODELS } from '../../data/assetDataModel';
 import { MonteCarloVisualizerCard } from './MonteCarloVisualizerCard';
@@ -11,7 +12,8 @@ import {
   Bitcoin, 
   TrendingUp, 
   Eye, 
-  EyeOff
+  EyeOff,
+  Download
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -44,6 +46,25 @@ export const BenchmarkAnalyticsView: React.FC<BenchmarkAnalyticsViewProps> = ({
 
   const toggleLine = (id: string) => {
     setVisibleLines(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const chartRef = useRef<HTMLDivElement>(null);
+
+  const handleExportChart = async () => {
+    if (!chartRef.current) return;
+    try {
+      const canvas = await html2canvas(chartRef.current, {
+        scale: 2, // High-DPI
+        backgroundColor: '#ffffff' // Light theme background
+      });
+      const dataUrl = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.download = `altcost_chart_${new Date().toISOString().slice(0,10)}.png`;
+      link.href = dataUrl;
+      link.click();
+    } catch (e) {
+      console.error('Failed to export chart', e);
+    }
   };
 
   const assetList = Object.values(ASSET_MODELS);
@@ -101,11 +122,20 @@ export const BenchmarkAnalyticsView: React.FC<BenchmarkAnalyticsViewProps> = ({
       <MonteCarloVisualizerCard summary={summary} currencySymbol={currencySymbol} />
 
       {/* Main Recharts Visualizer Canvas */}
-      <div className="light-card p-6 bg-white border border-slate-200/80 space-y-4">
+      <div ref={chartRef} className="light-card p-6 bg-white border border-slate-200/80 space-y-4 rounded-3xl relative">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <h3 className="font-bold text-slate-800 text-sm font-display">
-            Comparative Asset Growth Over Time
-          </h3>
+          <div className="flex items-center space-x-3">
+            <h3 className="font-bold text-slate-800 text-sm font-display">
+              Comparative Asset Growth Over Time
+            </h3>
+            <button
+              onClick={handleExportChart}
+              className="p-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors"
+              title="Export High-DPI Chart Image"
+            >
+              <Download className="w-4 h-4" />
+            </button>
+          </div>
 
           {/* Series Toggle Filters */}
           <div className="flex flex-wrap gap-1.5">
