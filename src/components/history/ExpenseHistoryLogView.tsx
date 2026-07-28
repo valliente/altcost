@@ -8,13 +8,15 @@ import {
   Filter, 
   Plus, 
   AlertCircle,
-  DollarSign,
   Download,
   Upload,
   PauseCircle,
   PlayCircle,
   CheckSquare,
-  Square
+  Square,
+  ArrowUpDown,
+  ChevronUp,
+  ChevronDown
 } from 'lucide-react';
 
 export interface ExpenseHistoryEntry extends ExpenseState {
@@ -35,6 +37,9 @@ interface ExpenseHistoryLogViewProps {
   currencySymbol?: string;
 }
 
+type SortColumn = 'title' | 'amount' | 'frequency' | 'status' | 'startDate' | 'createdAt';
+type SortDirection = 'asc' | 'desc';
+
 export const ExpenseHistoryLogView: React.FC<ExpenseHistoryLogViewProps> = ({
   historyLogs = [],
   onDeleteEntry,
@@ -50,7 +55,25 @@ export const ExpenseHistoryLogView: React.FC<ExpenseHistoryLogViewProps> = ({
   const [frequencyFilter, setFrequencyFilter] = useState<string>('all');
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [sortColumn, setSortColumn] = useState<SortColumn>('createdAt');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   const itemsPerPage = 10;
+
+  const handleSort = (column: SortColumn) => {
+    if (sortColumn === column) {
+      setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortColumn(column);
+      setSortDirection('asc');
+    }
+  };
+
+  const renderSortIcon = (column: SortColumn) => {
+    if (sortColumn !== column) return <ArrowUpDown className="w-3 h-3 text-slate-300 ml-1 inline-block" />;
+    return sortDirection === 'asc' 
+      ? <ChevronUp className="w-3 h-3 text-[#3464f3] ml-1 inline-block" /> 
+      : <ChevronDown className="w-3 h-3 text-[#3464f3] ml-1 inline-block" />;
+  };
 
   const filteredLogs = historyLogs.filter((log) => {
     const matchesSearch = log.title.toLowerCase().includes(searchQuery.toLowerCase());
@@ -58,9 +81,34 @@ export const ExpenseHistoryLogView: React.FC<ExpenseHistoryLogViewProps> = ({
     return matchesSearch && matchesFreq;
   });
 
-  const totalPages = Math.max(1, Math.ceil(filteredLogs.length / itemsPerPage));
+  const sortedLogs = [...filteredLogs].sort((a, b) => {
+    let comparison = 0;
+    switch (sortColumn) {
+      case 'title':
+        comparison = a.title.localeCompare(b.title);
+        break;
+      case 'amount':
+        comparison = a.amount - b.amount;
+        break;
+      case 'frequency':
+        comparison = a.frequency.localeCompare(b.frequency);
+        break;
+      case 'status':
+        comparison = (a.isPaused === b.isPaused) ? 0 : (a.isPaused ? 1 : -1);
+        break;
+      case 'startDate':
+        comparison = new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
+        break;
+      case 'createdAt':
+      default:
+        comparison = new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime();
+    }
+    return sortDirection === 'asc' ? comparison : -comparison;
+  });
+
+  const totalPages = Math.max(1, Math.ceil(sortedLogs.length / itemsPerPage));
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedLogs = filteredLogs.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedLogs = sortedLogs.slice(startIndex, startIndex + itemsPerPage);
 
   const toggleSelectAll = () => {
     if (selectedIds.length === paginatedLogs.length) {
@@ -222,11 +270,36 @@ export const ExpenseHistoryLogView: React.FC<ExpenseHistoryLogViewProps> = ({
                       {paginatedLogs.length > 0 && selectedIds.length === paginatedLogs.length ? <CheckSquare className="w-4 h-4 text-[#3464f3]" /> : <Square className="w-4 h-4" />}
                     </button>
                   </th>
-                  <th className="py-3.5 px-4">Habit Label</th>
-                  <th className="py-3.5 px-4">Amount</th>
-                  <th className="py-3.5 px-4">Frequency</th>
-                  <th className="py-3.5 px-4">Status</th>
-                  <th className="py-3.5 px-4">Start Date</th>
+                  <th 
+                    className="py-3.5 px-4 cursor-pointer hover:bg-slate-100 transition-colors group"
+                    onClick={() => handleSort('title')}
+                  >
+                    Habit Label {renderSortIcon('title')}
+                  </th>
+                  <th 
+                    className="py-3.5 px-4 cursor-pointer hover:bg-slate-100 transition-colors group"
+                    onClick={() => handleSort('amount')}
+                  >
+                    Amount {renderSortIcon('amount')}
+                  </th>
+                  <th 
+                    className="py-3.5 px-4 cursor-pointer hover:bg-slate-100 transition-colors group"
+                    onClick={() => handleSort('frequency')}
+                  >
+                    Frequency {renderSortIcon('frequency')}
+                  </th>
+                  <th 
+                    className="py-3.5 px-4 cursor-pointer hover:bg-slate-100 transition-colors group"
+                    onClick={() => handleSort('status')}
+                  >
+                    Status {renderSortIcon('status')}
+                  </th>
+                  <th 
+                    className="py-3.5 px-4 cursor-pointer hover:bg-slate-100 transition-colors group"
+                    onClick={() => handleSort('startDate')}
+                  >
+                    Start Date {renderSortIcon('startDate')}
+                  </th>
                   <th className="py-3.5 px-4 text-right">Actions</th>
                 </tr>
               </thead>
@@ -247,7 +320,11 @@ export const ExpenseHistoryLogView: React.FC<ExpenseHistoryLogViewProps> = ({
                         {currencySymbol}{log.amount.toLocaleString()}
                       </td>
                       <td className="py-3.5 px-4 capitalize">
-                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700">
+                        <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                          log.frequency === 'daily' ? 'bg-rose-100 text-rose-700' :
+                          log.frequency === 'weekly' ? 'bg-amber-100 text-amber-700' :
+                          'bg-blue-100 text-blue-700'
+                        }`}>
                           {log.frequency}
                         </span>
                       </td>
@@ -256,7 +333,7 @@ export const ExpenseHistoryLogView: React.FC<ExpenseHistoryLogViewProps> = ({
                           onClick={() => onTogglePauseEntry(log.id)}
                           className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-bold transition-all ${
                             log.isPaused
-                              ? 'bg-amber-100 text-amber-700 border border-amber-200'
+                              ? 'bg-slate-100 text-slate-500 border border-slate-200'
                               : 'bg-emerald-100 text-emerald-700 border border-emerald-200'
                           }`}
                         >
@@ -293,7 +370,7 @@ export const ExpenseHistoryLogView: React.FC<ExpenseHistoryLogViewProps> = ({
             {totalPages > 1 && (
               <div className="flex items-center justify-between p-4 border-t border-slate-200/80 bg-slate-50">
                 <span className="text-xs font-medium text-slate-500">
-                  Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredLogs.length)} of {filteredLogs.length} entries
+                  Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, sortedLogs.length)} of {sortedLogs.length} entries
                 </span>
                 <div className="flex space-x-2">
                   <button
