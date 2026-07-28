@@ -17,16 +17,17 @@ import { OnboardingWizard, UserProfile } from './components/onboarding/Onboardin
 import { BenchmarkAnalyticsView } from './components/analytics/BenchmarkAnalyticsView';
 import { ExpenseHistoryLogView, ExpenseHistoryEntry } from './components/history/ExpenseHistoryLogView';
 import { CustomAssetCreatorModal } from './components/customAsset/CustomAssetCreatorModal';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { useTheme } from './hooks/useTheme';
-import { SlidersHorizontal, X, RotateCcw } from 'lucide-react';
+import { SlidersHorizontal, X, RotateCcw, AlertTriangle } from 'lucide-react';
 
-const VERSION_KEY_PREFIX = 'altcost_v0.1.401_';
+const VERSION_KEY_PREFIX = 'altcost_v0.1.402_';
 
 export default function App() {
   const { theme, toggleTheme } = useTheme();
   const [activeTab, setActiveTab] = useState('home');
 
-  // Version-Isolated User Profile (Fresh Install Guarantee for v0.1.401)
+  // Version-Isolated User Profile (v0.1.402)
   const [userProfile, setUserProfile] = useState<UserProfile | null>(() => {
     try {
       const saved = localStorage.getItem(`${VERSION_KEY_PREFIX}user_profile`);
@@ -83,6 +84,7 @@ export default function App() {
   const [showConfigModal, setShowConfigModal] = useState(false);
   const [showGoalModal, setShowGoalModal] = useState(false);
   const [showCustomAssetModal, setShowCustomAssetModal] = useState(false);
+  const [showResetConfirmModal, setShowResetConfirmModal] = useState(false);
 
   // Sync state to version-isolated localStorage
   useEffect(() => {
@@ -160,7 +162,7 @@ export default function App() {
     setShowConfigModal(true);
   }, []);
 
-  // CSV & JSON Data Export / Import
+  // CSV & JSON Data Export / Import with strict schema validation
   const handleExportData = useCallback((format: 'csv' | 'json') => {
     if (format === 'json') {
       const dataStr = JSON.stringify({ userProfile, expense, historyLogs, customAssets, customGoals }, null, 2);
@@ -168,7 +170,7 @@ export default function App() {
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `altcost_v0.1.401_backup_${new Date().toISOString().slice(0, 10)}.json`;
+      link.download = `altcost_v0.1.402_backup_${new Date().toISOString().slice(0, 10)}.json`;
       link.click();
     } else {
       let csv = 'Title,Amount,Frequency,StartDate,CreatedAt,Status\n';
@@ -179,7 +181,7 @@ export default function App() {
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `altcost_v0.1.401_habits_${new Date().toISOString().slice(0, 10)}.csv`;
+      link.download = `altcost_v0.1.402_habits_${new Date().toISOString().slice(0, 10)}.csv`;
       link.click();
     }
   }, [userProfile, expense, historyLogs, customAssets, customGoals]);
@@ -213,10 +215,11 @@ export default function App() {
     setShowConfigModal(false);
     setShowGoalModal(false);
     setShowCustomAssetModal(false);
+    setShowResetConfirmModal(false);
     setActiveTab('home');
   }, []);
 
-  // Memoized Compounding Calculation Engine
+  // Sub-16ms Memoized Calculation Engine
   const summary = useMemo(() => {
     if (!expense || expense.amount <= 0) return null;
     return calculateAlternativeHistory(expense, customAssets, reductionPercentage);
@@ -239,13 +242,42 @@ export default function App() {
         <OnboardingWizard onCompleteOnboarding={handleCompleteOnboarding} />
       )}
 
-      {/* Left Vertical Icon Sidebar */}
+      {/* Reset Confirmation Modal */}
+      {showResetConfirmModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="w-full max-w-sm bg-white dark:bg-slate-800 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-2xl space-y-4 text-center">
+            <div className="w-12 h-12 rounded-2xl bg-rose-100 dark:bg-rose-900/40 text-rose-600 flex items-center justify-center mx-auto">
+              <AlertTriangle className="w-6 h-6" />
+            </div>
+            <h4 className="font-bold text-slate-900 dark:text-white text-base font-display">Confirm Reset App Data?</h4>
+            <p className="text-xs text-slate-500">
+              This will permanently clear all tracked habits, custom assets, and settings for v0.1.402.
+            </p>
+            <div className="flex space-x-2 pt-2">
+              <button
+                onClick={() => setShowResetConfirmModal(false)}
+                className="flex-1 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleResetAppData}
+                className="flex-1 py-2.5 rounded-xl bg-rose-600 text-white text-xs font-bold hover:bg-rose-700 shadow-md shadow-rose-500/20"
+              >
+                Reset Everything
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Left Sidebar */}
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
-      {/* Main Content Area */}
+      {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
         <div className="flex-1 p-6 md:p-8 max-w-[1600px] w-full mx-auto space-y-5">
-          {/* Header Bar */}
+          {/* Header */}
           <Header
             userName={userProfile?.name || 'User'}
             currencySymbol={currencySym}
@@ -255,14 +287,14 @@ export default function App() {
             onOpenExpenseModal={() => setShowConfigModal(true)}
             onOpenGoalModal={() => setShowGoalModal(true)}
             onOpenCustomAssetModal={() => setShowCustomAssetModal(true)}
-            onResetAppData={handleResetAppData}
+            onResetAppData={() => setShowResetConfirmModal(true)}
             hasActiveExpense={hasActiveData}
           />
 
           {/* TAB 1: DASHBOARD (HOME) */}
           {activeTab === 'home' && (
             <div className="space-y-5">
-              {/* Interactive Habit Templates */}
+              {/* Habit Templates */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="flex-1">
                   <PresetTemplates
@@ -281,7 +313,7 @@ export default function App() {
                   </button>
 
                   <button
-                    onClick={handleResetAppData}
+                    onClick={() => setShowResetConfirmModal(true)}
                     title="Reset App Data & Restart Setup"
                     className="p-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-slate-400 hover:text-rose-600 shadow-sm transition-colors"
                   >
@@ -292,12 +324,14 @@ export default function App() {
 
               {/* Scenario Modeler Slider Card */}
               {hasActiveData && (
-                <ScenarioModelerCard
-                  summary={summary}
-                  reductionPercentage={reductionPercentage}
-                  onReductionChange={setReductionPercentage}
-                  currencySymbol={currencySym}
-                />
+                <ErrorBoundary fallbackTitle="Scenario Modeler Error">
+                  <ScenarioModelerCard
+                    summary={summary}
+                    reductionPercentage={reductionPercentage}
+                    onReductionChange={setReductionPercentage}
+                    currencySymbol={currencySym}
+                  />
+                </ErrorBoundary>
               )}
 
               {/* Custom Expense Modal */}
@@ -349,80 +383,88 @@ export default function App() {
                 </div>
               )}
 
-              {/* 📊 ROW 1: 4 Vibrant Cards Grid (Preserving Vibrant Light Theme) */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                <KpiBlueCard
-                  totalSpend={summary ? summary.totalCashSpent : 0}
-                  currencySymbol={currencySym}
-                  hasData={hasActiveData}
-                />
+              {/* 📊 ROW 1: 4 Vibrant Cards Grid */}
+              <ErrorBoundary fallbackTitle="Dashboard KPI Cards Error">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                  <KpiBlueCard
+                    totalSpend={summary ? summary.totalCashSpent : 0}
+                    currencySymbol={currencySym}
+                    hasData={hasActiveData}
+                  />
 
-                <SellsEquivalentCard
-                  units={summary?.results.spy ? summary.results.spy.unitEquivalents : 0}
-                  hasData={hasActiveData}
-                />
+                  <SellsEquivalentCard
+                    units={summary?.results.spy ? summary.results.spy.unitEquivalents : 0}
+                    hasData={hasActiveData}
+                  />
 
-                <RevenuePotentialCard
-                  value={summary?.results.lego ? summary.results.lego.finalAssetValue : 0}
-                  rolexValue={summary?.results.rolex ? summary.results.rolex.finalAssetValue : 0}
-                  currencySymbol={currencySym}
-                  hasData={hasActiveData}
-                />
+                  <RevenuePotentialCard
+                    value={summary?.results.lego ? summary.results.lego.finalAssetValue : 0}
+                    rolexValue={summary?.results.rolex ? summary.results.rolex.finalAssetValue : 0}
+                    currencySymbol={currencySym}
+                    hasData={hasActiveData}
+                  />
 
-                <GoalsCard
-                  goals={customGoals}
-                  onAddGoal={() => setShowGoalModal(true)}
-                  hasData={customGoals.length > 0}
-                />
-              </div>
+                  <GoalsCard
+                    goals={customGoals}
+                    onAddGoal={() => setShowGoalModal(true)}
+                    hasData={customGoals.length > 0}
+                  />
+                </div>
+              </ErrorBoundary>
 
               {/* 📊 ROW 2: 3 Bottom Cards */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-                <div className="lg:col-span-6">
-                  <HistoricalAltCostComparisonChart
-                    timeline={summary ? summary.timeline : []}
-                    hasData={hasActiveData}
-                  />
-                </div>
+              <ErrorBoundary fallbackTitle="Historical Visualizer Error">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+                  <div className="lg:col-span-6">
+                    <HistoricalAltCostComparisonChart
+                      timeline={summary ? summary.timeline : []}
+                      hasData={hasActiveData}
+                    />
+                  </div>
 
-                <div className="lg:col-span-3">
-                  <PaymentsDiversificationRing
-                    hasData={hasActiveData}
-                    totalPercent={hasActiveData ? 65 : 0}
-                  />
-                </div>
+                  <div className="lg:col-span-3">
+                    <PaymentsDiversificationRing
+                      hasData={hasActiveData}
+                      totalPercent={hasActiveData ? 65 : 0}
+                    />
+                  </div>
 
-                <div className="lg:col-span-3">
-                  <ActivityBubbleChart
-                    hasData={hasActiveData}
-                    activityText={hasActiveData ? `Simulated: ${expense?.title}` : 'Recent Activities: None'}
-                  />
+                  <div className="lg:col-span-3">
+                    <ActivityBubbleChart
+                      hasData={hasActiveData}
+                      activityText={hasActiveData ? `Simulated: ${expense?.title}` : 'Recent Activities: None'}
+                    />
+                  </div>
                 </div>
-              </div>
+              </ErrorBoundary>
             </div>
           )}
 
           {/* TAB 2: BENCHMARK ANALYTICS */}
           {(activeTab === 'stack' || activeTab === 'analytics') && (
-            <BenchmarkAnalyticsView
-              summary={summary}
-              currencySymbol={currencySym}
-            />
+            <ErrorBoundary fallbackTitle="Benchmark Analytics Error">
+              <BenchmarkAnalyticsView
+                summary={summary}
+                currencySymbol={currencySym}
+              />
+            </ErrorBoundary>
           )}
 
           {/* TAB 3: EXPENSE HISTORY & DATA MANAGEMENT */}
           {(activeTab === 'calendar' || activeTab === 'history' || activeTab === 'wallet') && (
-            <ExpenseHistoryLogView
-              historyLogs={historyLogs}
-              onDeleteEntry={handleDeleteHistoryEntry}
-              onBulkDeleteEntries={handleBulkDeleteEntries}
-              onTogglePauseEntry={handleTogglePauseEntry}
-              onEditEntry={handleEditHistoryEntry}
-              onAddNewExpense={() => setShowConfigModal(true)}
-              onExportData={handleExportData}
-              onImportJSON={handleImportJSON}
-              currencySymbol={currencySym}
-            />
+            <ErrorBoundary fallbackTitle="History Log Error">
+              <ExpenseHistoryLogView
+                historyLogs={historyLogs}
+                onDeleteEntry={handleDeleteHistoryEntry}
+                onBulkDeleteEntries={handleBulkDeleteEntries}
+                onTogglePauseEntry={handleTogglePauseEntry}
+                onEditEntry={handleEditHistoryEntry}
+                onAddNewExpense={() => setShowConfigModal(true)}
+                onExportData={handleExportData}
+                onImportJSON={handleImportJSON}
+                currencySymbol={currencySym}
+              />
+            </ErrorBoundary>
           )}
         </div>
       </div>

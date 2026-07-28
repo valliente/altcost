@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 
 export type ThemeMode = 'light' | 'dark';
-const STORAGE_KEY = 'altcost_v0.1.401_theme';
+const STORAGE_KEY = 'altcost_v0.1.402_theme';
 
 export function useTheme() {
   const [theme, setTheme] = useState<ThemeMode>(() => {

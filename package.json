@@ -1,7 +1,7 @@
 {
   "name": "altcost",
-  "version": "0.1.401",
-  "description": "Alternative History Asset Comparison Engine - Major Feature Release",
+  "version": "0.1.402",
+  "description": "Alternative History Asset Comparison Engine - Deep System & Stability Update",
   "private": true,
   "type": "module",
   "main": "electron/main.cjs",
@@ -39,7 +39,7 @@
   "build": {
     "appId": "com.altcost.app",
     "productName": "AltCost",
-    "artifactName": "AltCost-Setup-0.1.401.${ext}",
+    "artifactName": "AltCost-Setup-0.1.402.${ext}",
     "directories": {
       "output": "dist_electron"
     },
