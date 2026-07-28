@@ -1,6 +1,7 @@
 import React, { useState, memo } from 'react';
 import { ChevronDown, ShoppingBag } from 'lucide-react';
-import { ResponsiveContainer, AreaChart, Area } from 'recharts';
+import { AreaChart, Area } from 'recharts';
+import { SafeRechartsWrapper } from '../common/SafeRechartsWrapper';
 
 interface SellsEquivalentCardProps {
   units?: number;
@@ -37,8 +38,7 @@ export const SellsEquivalentCard: React.FC<SellsEquivalentCardProps> = memo(({ u
       </div>
 
       {/* Smooth Wavy Line Curve matching image_2.png */}
-      <div className="h-16 w-full -mb-2">
-        <ResponsiveContainer width="100%" height="100%">
+      <SafeRechartsWrapper containerClassName="h-16 w-full -mb-2" width="100%" height="100%">
           <AreaChart data={lineData} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
             <defs>
               <linearGradient id="pinkGrad" x1="0" y1="0" x2="0" y2="1">
@@ -55,8 +55,7 @@ export const SellsEquivalentCard: React.FC<SellsEquivalentCardProps> = memo(({ u
               isAnimationActive={true}
             />
           </AreaChart>
-        </ResponsiveContainer>
-      </div>
+      </SafeRechartsWrapper>
     </div>
   );
 });

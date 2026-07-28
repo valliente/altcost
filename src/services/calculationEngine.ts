@@ -73,6 +73,12 @@ export function runMonteCarloSimulation(
   horizonYears: number = 20,
   simulations: number = 1000
 ): Promise<MonteCarloPercentiles> {
+  const safeSpend = Math.max(0, monthlySpend);
+  const safeCagr = Math.max(-100, annualCagr);
+  const safeVol = Math.max(0, annualVolatility);
+  const safeHorizon = Math.max(0, horizonYears);
+  const safeSims = Math.max(1, simulations);
+
   return new Promise((resolve, reject) => {
     try {
       const worker = new Worker(new URL('./monteCarloWorker.ts', import.meta.url), { type: 'module' });
@@ -85,35 +91,50 @@ export function runMonteCarloSimulation(
         worker.terminate();
       };
       worker.postMessage({
-        monthlySpend,
-        annualCagr,
-        annualVolatility,
-        horizonYears,
-        simulations
+        monthlySpend: safeSpend,
+        annualCagr: safeCagr,
+        annualVolatility: safeVol,
+        horizonYears: safeHorizon,
+        simulations: safeSims
       });
     } catch (e) {
-      // Fallback for testing environments without Worker support
-      const monthlyCagr = annualCagr / 100 / 12;
-      const monthlyVol = annualVolatility / Math.sqrt(12);
-      const totalMonths = Math.round(horizonYears * 12);
+      // Fallback for testing environments without Worker support - using async chunking
+      const monthlyCagr = safeCagr / 100 / 12;
+      const monthlyVol = safeVol / Math.sqrt(12);
+      const totalMonths = Math.round(safeHorizon * 12);
       const finalBalances: number[] = [];
-      for (let s = 0; s < simulations; s++) {
-        let balance = 0;
-        for (let m = 0; m < totalMonths; m++) {
-          const u1 = Math.random() || 0.0001;
-          const u2 = Math.random() || 0.0001;
-          const z = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
-          const monthReturn = monthlyCagr + z * monthlyVol;
-          balance = (balance + monthlySpend) * Math.max(0.7, 1 + monthReturn);
+      const CHUNK_SIZE = 100;
+      let currentSim = 0;
+
+      const processChunk = () => {
+        const end = Math.min(currentSim + CHUNK_SIZE, safeSims);
+        for (let s = currentSim; s < end; s++) {
+          let balance = 0;
+          for (let m = 0; m < totalMonths; m++) {
+            const u1 = Math.random() || 0.0001;
+            const u2 = Math.random() || 0.0001;
+            const z = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
+            const monthReturn = monthlyCagr + z * monthlyVol;
+            balance = (balance + safeSpend) * Math.max(0.7, 1 + monthReturn);
+          }
+          finalBalances.push(Math.round(balance));
         }
-        finalBalances.push(Math.round(balance));
-      }
-      finalBalances.sort((a, b) => a - b);
-      resolve({
-        p10th: finalBalances[Math.floor(simulations * 0.10)] || 0,
-        p50th: finalBalances[Math.floor(simulations * 0.50)] || 0,
-        p90th: finalBalances[Math.floor(simulations * 0.90)] || 0,
-      });
+        
+        currentSim = end;
+        
+        if (currentSim < safeSims) {
+          setTimeout(processChunk, 0); // Yield to main thread
+        } else {
+          finalBalances.sort((a, b) => a - b);
+          resolve({
+            p10th: finalBalances[Math.floor(safeSims * 0.10)] || 0,
+            p50th: finalBalances[Math.floor(safeSims * 0.50)] || 0,
+            p90th: finalBalances[Math.floor(safeSims * 0.90)] || 0,
+          });
+        }
+      };
+      
+      processChunk();
     }
   });
 }
@@ -122,12 +143,15 @@ export function runMonteCarloSimulation(
  * Opportunity Cost Time Horizon Compound Calculator
  */
 export function calculateTimeHorizons(monthlySpend: number, annualCagr: number = 10.5): OpportunityCostTimeHorizons {
+  const safeSpend = Math.max(0, monthlySpend);
+  const safeCagr = Math.max(-100, annualCagr);
+  
   const calcForYears = (years: number) => {
-    const months = years * 12;
-    const monthlyRate = Math.pow(1 + annualCagr / 100, 1 / 12) - 1;
+    const months = Math.max(0, years) * 12;
+    const monthlyRate = Math.pow(1 + safeCagr / 100, 1 / 12) - 1;
     let balance = 0;
     for (let m = 0; m < months; m++) {
-      balance = (balance + monthlySpend) * (1 + monthlyRate);
+      balance = (balance + safeSpend) * (1 + monthlyRate);
     }
     return Math.round(balance);
   };

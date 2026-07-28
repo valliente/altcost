@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/55</span>
+                <span class='fraction'>0/54</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/55</span>
+                <span class='fraction'>0/54</span>
             </div>
         
             
@@ -134,10 +134,11 @@
 <a name='L69'></a><a href='#L69'>69</a>
 <a name='L70'></a><a href='#L70'>70</a>
 <a name='L71'></a><a href='#L71'>71</a>
-<a name='L72'></a><a href='#L72'>72</a>
-<a name='L73'></a><a href='#L73'>73</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L72'></a><a href='#L72'>72</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -145,22 +146,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -169,14 +157,15 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -186,6 +175,15 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -209,7 +207,8 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" >import React, { useState, memo } from 'react';<span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" ></span></span></span>
 <span class="cstat-no" title="statement not covered" >import { ChevronDown, Watch } from 'lucide-react';</span>
-<span class="cstat-no" title="statement not covered" >import { ResponsiveContainer, AreaChart, Area } from 'recharts';</span>
+<span class="cstat-no" title="statement not covered" >import { AreaChart, Area } from 'recharts';</span>
+<span class="cstat-no" title="statement not covered" >import { SafeRechartsWrapper } from '../common/SafeRechartsWrapper';</span>
 &nbsp;
 interface RevenuePotentialCardProps {
   value?: number;
@@ -231,14 +230,14 @@ interface RevenuePotentialCardProps {
 <span class="cstat-no" title="statement not covered" >    : [{ val: 10 }, { val: 20 }, { val: 15 }, { val: 25 }, { val: 18 }, { val: 30 }, { val: 22 }];</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >  return (</span>
-<span class="cstat-no" title="statement not covered" >    &lt;div className="light-card p-6 flex flex-col justify-between h-full min-h-[220px]"&gt;</span>
+<span class="cstat-no" title="statement not covered" >    &lt;div className="light-card p-6 flex flex-col justify-between h-full min-h-[220px] rounded-2xl bg-white border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow"&gt;</span>
       {/* Top Header */}
 <span class="cstat-no" title="statement not covered" >      &lt;div className="flex items-center justify-between"&gt;</span>
 <span class="cstat-no" title="statement not covered" >        &lt;div className="w-10 h-10 rounded-full bg-amber-100/80 flex items-center justify-center"&gt;</span>
 <span class="cstat-no" title="statement not covered" >          &lt;Watch className="w-5 h-5 text-amber-500" /&gt;</span>
 <span class="cstat-no" title="statement not covered" >        &lt;/div&gt;</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >        &lt;button className="flex items-center space-x-1 text-xs text-slate-400 hover:text-slate-600"&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;button className="flex items-center space-x-1 text-[10px] font-bold uppercase tracking-wider text-amber-600 bg-amber-50 px-2 py-1 rounded-full hover:bg-amber-100 transition-colors"&gt;</span>
 <span class="cstat-no" title="statement not covered" >          &lt;span&gt;{timeframe}&lt;/span&gt;</span>
 <span class="cstat-no" title="statement not covered" >          &lt;ChevronDown className="w-3.5 h-3.5" /&gt;</span>
 <span class="cstat-no" title="statement not covered" >        &lt;/button&gt;</span>
@@ -256,8 +255,7 @@ interface RevenuePotentialCardProps {
 <span class="cstat-no" title="statement not covered" >      &lt;/div&gt;</span>
 &nbsp;
       {/* Smooth Wavy Line Chart matching image_2.png */}
-<span class="cstat-no" title="statement not covered" >      &lt;div className="h-16 w-full -mb-2"&gt;</span>
-<span class="cstat-no" title="statement not covered" >        &lt;ResponsiveContainer width="100%" height="100%"&gt;</span>
+<span class="cstat-no" title="statement not covered" >      &lt;SafeRechartsWrapper containerClassName="h-16 w-full -mb-2" width="100%" height="100%"&gt;</span>
 <span class="cstat-no" title="statement not covered" >          &lt;AreaChart data={lineData} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}&gt;</span>
 <span class="cstat-no" title="statement not covered" >            &lt;defs&gt;</span>
 <span class="cstat-no" title="statement not covered" >              &lt;linearGradient id="yellowGrad" x1="0" y1="0" x2="0" y2="1"&gt;</span>
@@ -274,8 +272,7 @@ interface RevenuePotentialCardProps {
 <span class="cstat-no" title="statement not covered" >              isAnimationActive={true}</span>
 <span class="cstat-no" title="statement not covered" >            /&gt;</span>
 <span class="cstat-no" title="statement not covered" >          &lt;/AreaChart&gt;</span>
-<span class="cstat-no" title="statement not covered" >        &lt;/ResponsiveContainer&gt;</span>
-<span class="cstat-no" title="statement not covered" >      &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >      &lt;/SafeRechartsWrapper&gt;</span>
 <span class="cstat-no" title="statement not covered" >    &lt;/div&gt;</span>
   );
 <span class="cstat-no" title="statement not covered" >});</span>
@@ -286,7 +283,7 @@ interface RevenuePotentialCardProps {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-07-28T10:06:09.696Z
+                at 2026-07-28T21:43:47.760Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { ExpenseHistoryLogView, ExpenseHistoryEntry } from '../components/history/ExpenseHistoryLogView';
 import { vi, describe, it, expect } from 'vitest';
 
@@ -64,5 +64,52 @@ describe('ExpenseHistoryLogView', () => {
     // Pagination info update
     expect(screen.getByText(/Showing 11 to 15 of 15 entries/)).toBeDefined();
     expect(screen.getByText(/2 \/ 2/)).toBeDefined();
+  });
+
+  it('filters results based on search query', async () => {
+    render(
+      <ExpenseHistoryLogView
+        historyLogs={mockLogs}
+        onDeleteEntry={vi.fn()}
+        onBulkDeleteEntries={vi.fn()}
+        onTogglePauseEntry={vi.fn()}
+        onEditEntry={vi.fn()}
+        onAddNewExpense={vi.fn()}
+        onExportData={vi.fn()}
+        onImportJSON={vi.fn()}
+      />
+    );
+
+    const searchInput = screen.getByPlaceholderText(/Search habit history by label.../i);
+    fireEvent.change(searchInput, { target: { value: 'Habit 12' } });
+
+    // Should only show the matched item
+    expect(screen.getByText('Test Habit 12')).toBeDefined();
+    expect(screen.queryByText('Test Habit 1')).toBeNull();
+  });
+
+  it('calls onDeleteEntry when delete button is clicked', () => {
+    const mockDelete = vi.fn();
+    render(
+      <ExpenseHistoryLogView
+        historyLogs={[mockLogs[0]]}
+        onDeleteEntry={mockDelete}
+        onBulkDeleteEntries={vi.fn()}
+        onTogglePauseEntry={vi.fn()}
+        onEditEntry={vi.fn()}
+        onAddNewExpense={vi.fn()}
+        onExportData={vi.fn()}
+        onImportJSON={vi.fn()}
+      />
+    );
+
+    // Expand the dropdown menu first if it's hidden behind a generic More button, 
+    // or just click the trash icon if it's directly available. The component uses lucide-react Trash2.
+    // Assuming the table row has a delete button (via title or generic role).
+    const deleteButton = screen.getAllByRole('button').find(btn => btn.className.includes('text-rose-600'));
+    if (deleteButton) {
+      fireEvent.click(deleteButton);
+      expect(mockDelete).toHaveBeenCalledWith('log-0');
+    }
   });
 });

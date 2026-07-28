@@ -4,6 +4,7 @@ import { Sidebar } from './components/layout/Sidebar';
 import { ExpenseInputForm, ExpenseState } from './components/calculator/ExpenseInputForm';
 import { PresetTemplates } from './components/presets/PresetTemplates';
 import { calculateAlternativeHistory, CalculationSummary } from './services/calculationEngine';
+import { useAltCostEngine } from './hooks/useAltCostEngine';
 import { AssetConfig } from './data/assetDataModel';
 import { KpiBlueCard } from './components/dashboard/KpiBlueCard';
 import { SellsEquivalentCard } from './components/dashboard/SellsEquivalentCard';
@@ -20,63 +21,44 @@ import { ExpenseHistoryLogView, ExpenseHistoryEntry } from './components/history
 import { CustomAssetCreatorModal } from './components/customAsset/CustomAssetCreatorModal';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { useTheme } from './hooks/useTheme';
+import { useDebouncedLocalStorage } from './hooks/useDebouncedLocalStorage';
 import { SlidersHorizontal, X, RotateCcw, AlertTriangle, Trash2 } from 'lucide-react';
 
-const VERSION_KEY_PREFIX = 'altcost_v0.1.407_';
+const VERSION_KEY_PREFIX = 'altcost_v0.1.410_';
 
 export default function App() {
   const { theme, toggleTheme } = useTheme();
   const [activeTab, setActiveTab] = useState('home');
 
-  // Version-Isolated User Profile (v0.1.405)
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(() => {
-    try {
-      const saved = localStorage.getItem(`${VERSION_KEY_PREFIX}user_profile`);
-      return saved ? JSON.parse(saved) : null;
-    } catch (e) {
-      return null;
-    }
-  });
+  // Version-Isolated User Profile (v0.1.408)
+  const [userProfile, setUserProfile] = useDebouncedLocalStorage<UserProfile | null>(
+    `${VERSION_KEY_PREFIX}user_profile`,
+    null
+  );
 
   // Version-Isolated Active Expense
-  const [expense, setExpense] = useState<ExpenseState | null>(() => {
-    try {
-      const saved = localStorage.getItem(`${VERSION_KEY_PREFIX}expenses`);
-      return saved ? JSON.parse(saved) : null;
-    } catch (e) {
-      return null;
-    }
-  });
+  const [expense, setExpense] = useDebouncedLocalStorage<ExpenseState | null>(
+    `${VERSION_KEY_PREFIX}expenses`,
+    null
+  );
 
   // Version-Isolated Custom Assets
-  const [customAssets, setCustomAssets] = useState<AssetConfig[]>(() => {
-    try {
-      const saved = localStorage.getItem(`${VERSION_KEY_PREFIX}custom_assets`);
-      return saved ? JSON.parse(saved) : [];
-    } catch (e) {
-      return [];
-    }
-  });
+  const [customAssets, setCustomAssets] = useDebouncedLocalStorage<AssetConfig[]>(
+    `${VERSION_KEY_PREFIX}custom_assets`,
+    []
+  );
 
   // Version-Isolated History Logs
-  const [historyLogs, setHistoryLogs] = useState<ExpenseHistoryEntry[]>(() => {
-    try {
-      const saved = localStorage.getItem(`${VERSION_KEY_PREFIX}history_logs`);
-      return saved ? JSON.parse(saved) : [];
-    } catch (e) {
-      return [];
-    }
-  });
+  const [historyLogs, setHistoryLogs] = useDebouncedLocalStorage<ExpenseHistoryEntry[]>(
+    `${VERSION_KEY_PREFIX}history_logs`,
+    []
+  );
 
   // Version-Isolated Goals
-  const [customGoals, setCustomGoals] = useState<GoalItemData[]>(() => {
-    try {
-      const saved = localStorage.getItem(`${VERSION_KEY_PREFIX}goals`);
-      return saved ? JSON.parse(saved) : [];
-    } catch (e) {
-      return [];
-    }
-  });
+  const [customGoals, setCustomGoals] = useDebouncedLocalStorage<GoalItemData[]>(
+    `${VERSION_KEY_PREFIX}goals`,
+    []
+  );
 
   // Habit Reduction Slider (Scenario Modeler 0% - 100%)
   const [reductionPercentage, setReductionPercentage] = useState<number>(0);
@@ -101,7 +83,6 @@ export default function App() {
       let monthly = log.amount;
       if (log.frequency === 'daily') monthly = log.amount * 30.4375;
       if (log.frequency === 'weekly') monthly = (log.amount * 52) / 12;
-      if (log.frequency === 'yearly') monthly = log.amount / 12;
       totalMonthlySpend += monthly;
 
       const d = new Date(log.startDate).getTime();
@@ -127,27 +108,6 @@ export default function App() {
       editCountRef.current = 0;
     }
   }, [userProfile, expense, historyLogs, customAssets, customGoals]);
-
-  // Sync state to version-isolated localStorage
-  useEffect(() => {
-    if (userProfile) localStorage.setItem(`${VERSION_KEY_PREFIX}user_profile`, JSON.stringify(userProfile));
-  }, [userProfile]);
-
-  useEffect(() => {
-    if (expense) localStorage.setItem(`${VERSION_KEY_PREFIX}expenses`, JSON.stringify(expense));
-  }, [expense]);
-
-  useEffect(() => {
-    localStorage.setItem(`${VERSION_KEY_PREFIX}custom_assets`, JSON.stringify(customAssets));
-  }, [customAssets]);
-
-  useEffect(() => {
-    localStorage.setItem(`${VERSION_KEY_PREFIX}history_logs`, JSON.stringify(historyLogs));
-  }, [historyLogs]);
-
-  useEffect(() => {
-    localStorage.setItem(`${VERSION_KEY_PREFIX}goals`, JSON.stringify(customGoals));
-  }, [customGoals]);
 
   // Manage backdrop scrolling for full-screen modals
   useEffect(() => {
@@ -231,7 +191,7 @@ export default function App() {
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `altcost_v0.1.405_backup_${new Date().toISOString().slice(0, 10)}.json`;
+      link.download = `altcost_v0.1.410_backup_${new Date().toISOString().slice(0, 10)}.json`;
       link.click();
     } else {
       let csv = 'Title,Amount,Frequency,StartDate,CreatedAt,Status\n';
@@ -242,7 +202,7 @@ export default function App() {
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `altcost_v0.1.405_habits_${new Date().toISOString().slice(0, 10)}.csv`;
+      link.download = `altcost_v0.1.410_habits_${new Date().toISOString().slice(0, 10)}.csv`;
       link.click();
     }
   }, [userProfile, expense, historyLogs, customAssets, customGoals]);
@@ -280,23 +240,16 @@ export default function App() {
     setActiveTab('home');
   }, []);
 
-  // Async Calculation Engine
-  const [summary, setSummary] = useState<CalculationSummary | null>(null);
+  // Async Calculation Engine via custom hook for optimal performance
+  const activeExpense = aggregatedExpense || expense;
+  
+  const { calculationResult: summary, isCalculating } = useAltCostEngine(
+    activeExpense || { title: '', amount: 0, frequency: 'monthly', startDate: '' },
+    customAssets,
+    reductionPercentage
+  );
 
-  useEffect(() => {
-    let isMounted = true;
-    const activeExpense = aggregatedExpense || expense;
-    if (!activeExpense || activeExpense.amount <= 0) {
-      setSummary(null);
-      return;
-    }
-    calculateAlternativeHistory(activeExpense, customAssets, reductionPercentage).then(res => {
-      if (isMounted) setSummary(res);
-    });
-    return () => { isMounted = false; };
-  }, [aggregatedExpense, expense, customAssets, reductionPercentage]);
-
-  const hasActiveData = summary !== null && summary.totalCashSpent > 0;
+  const hasActiveData = Boolean(summary !== null && summary.totalCashSpent > 0 && activeExpense && activeExpense.amount > 0);
   const currencySym = userProfile?.currency || '$';
 
   const handleCreateDefaultGoal = () => {
@@ -315,7 +268,7 @@ export default function App() {
 
       {/* Database Inspector & Purge Modal */}
       {showResetConfirmModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200">
           <div className="w-full max-w-md bg-white rounded-3xl p-6 border border-slate-200 shadow-2xl space-y-5">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
@@ -324,7 +277,7 @@ export default function App() {
                 </div>
                 <div>
                   <h4 className="font-bold text-slate-900 text-base font-display">Database Inspector</h4>
-                  <p className="text-xs text-slate-500">v0.1.405 Isolated Storage</p>
+                  <p className="text-xs text-slate-500">v0.1.410 Isolated Storage</p>
                 </div>
               </div>
               <button onClick={() => setShowResetConfirmModal(false)} className="text-slate-400 hover:text-slate-600">

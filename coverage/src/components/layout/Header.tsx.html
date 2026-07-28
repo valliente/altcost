@@ -219,10 +219,7 @@
 <a name='L154'></a><a href='#L154'>154</a>
 <a name='L155'></a><a href='#L155'>155</a>
 <a name='L156'></a><a href='#L156'>156</a>
-<a name='L157'></a><a href='#L157'>157</a>
-<a name='L158'></a><a href='#L158'>158</a>
-<a name='L159'></a><a href='#L159'>159</a>
-<a name='L160'></a><a href='#L160'>160</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L157'></a><a href='#L157'>157</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -330,16 +327,13 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -382,7 +376,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" >import React, { useState } from 'react';<span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" ></span></span></span>
-<span class="cstat-no" title="statement not covered" >import { Search, Bell, ChevronDown, User, PlusCircle, Target, RefreshCw, Moon, Sun, Sparkles } from 'lucide-react';</span>
+<span class="cstat-no" title="statement not covered" >import { Search, Bell, ChevronDown, User, PlusCircle, Target, RefreshCw, Sparkles } from 'lucide-react';</span>
 import { ThemeMode } from '../../hooks/useTheme';
 &nbsp;
 interface HeaderProps {
@@ -437,17 +431,17 @@ interface HeaderProps {
 <span class="cstat-no" title="statement not covered" >              onChange={(e) =&gt; setTempName(e.target.value)}</span>
 <span class="cstat-no" title="statement not covered" >              onBlur={handleSaveName}</span>
 <span class="cstat-no" title="statement not covered" >              onKeyDown={(e) =&gt; e.key === 'Enter' &amp;&amp; handleSaveName()}</span>
-<span class="cstat-no" title="statement not covered" >              className="text-2xl font-extrabold text-slate-900 dark:text-white bg-white dark:bg-slate-800 px-3 py-1 rounded-xl border border-blue-400 outline-none"</span>
+<span class="cstat-no" title="statement not covered" >              className="text-2xl font-extrabold text-slate-900 bg-white px-3 py-1 rounded-xl border border-blue-400 outline-none"</span>
 <span class="cstat-no" title="statement not covered" >              autoFocus</span>
 <span class="cstat-no" title="statement not covered" >            /&gt;</span>
           ) : (
 <span class="cstat-no" title="statement not covered" >            &lt;h1 </span>
 <span class="cstat-no" title="statement not covered" >              onClick={() =&gt; setIsEditingName(true)}</span>
-<span class="cstat-no" title="statement not covered" >              className="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white font-display tracking-tight cursor-pointer hover:opacity-80 transition-opacity flex items-center space-x-2"</span>
+<span class="cstat-no" title="statement not covered" >              className="text-2xl md:text-3xl font-extrabold text-slate-900 font-display tracking-tight cursor-pointer hover:opacity-80 transition-opacity flex items-center space-x-2"</span>
 <span class="cstat-no" title="statement not covered" >              title="Click to edit name"</span>
             &gt;
 <span class="cstat-no" title="statement not covered" >              &lt;span&gt;Hi, {userName}&lt;/span&gt;</span>
-<span class="cstat-no" title="statement not covered" >              &lt;span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/40 text-[#3464f3] dark:text-blue-300 font-mono"&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-100 text-[#3464f3] font-mono"&gt;</span>
 <span class="cstat-no" title="statement not covered" >                {currencySymbol} Currency</span>
 <span class="cstat-no" title="statement not covered" >              &lt;/span&gt;</span>
 <span class="cstat-no" title="statement not covered" >            &lt;/h1&gt;</span>
@@ -458,7 +452,7 @@ interface HeaderProps {
 <span class="cstat-no" title="statement not covered" >        &lt;div className="flex flex-wrap items-center gap-2"&gt;</span>
 <span class="cstat-no" title="statement not covered" >          &lt;button</span>
 <span class="cstat-no" title="statement not covered" >            onClick={onOpenExpenseModal}</span>
-<span class="cstat-no" title="statement not covered" >            className="px-4 py-2 rounded-2xl bg-white dark:bg-slate-800 border border-slate-300/80 dark:border-slate-700 text-xs font-semibold text-slate-800 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm flex items-center space-x-1.5"</span>
+<span class="cstat-no" title="statement not covered" >            className="px-4 py-2 rounded-2xl bg-white border border-slate-300/80 text-xs font-semibold text-slate-800 hover:bg-slate-50 transition-all shadow-sm flex items-center space-x-1.5"</span>
           &gt;
 <span class="cstat-no" title="statement not covered" >            &lt;PlusCircle className="w-3.5 h-3.5 text-[#3464f3]" /&gt;</span>
 <span class="cstat-no" title="statement not covered" >            &lt;span&gt;{hasActiveExpense ? 'Edit Recurring Expense' : 'Get Started: Add Your First Recurring Expense'}&lt;/span&gt;</span>
@@ -466,7 +460,7 @@ interface HeaderProps {
 &nbsp;
 <span class="cstat-no" title="statement not covered" >          &lt;button</span>
 <span class="cstat-no" title="statement not covered" >            onClick={onOpenCustomAssetModal}</span>
-<span class="cstat-no" title="statement not covered" >            className="px-4 py-2 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-xs font-semibold text-purple-600 dark:text-purple-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm flex items-center space-x-1.5"</span>
+<span class="cstat-no" title="statement not covered" >            className="px-4 py-2 rounded-2xl bg-white border border-slate-200/80 text-xs font-semibold text-purple-600 hover:bg-slate-50 transition-all shadow-sm flex items-center space-x-1.5"</span>
           &gt;
 <span class="cstat-no" title="statement not covered" >            &lt;Sparkles className="w-3.5 h-3.5 text-purple-500" /&gt;</span>
 <span class="cstat-no" title="statement not covered" >            &lt;span&gt;Create Custom Asset&lt;/span&gt;</span>
@@ -474,7 +468,7 @@ interface HeaderProps {
 &nbsp;
 <span class="cstat-no" title="statement not covered" >          &lt;button</span>
 <span class="cstat-no" title="statement not covered" >            onClick={onOpenGoalModal}</span>
-<span class="cstat-no" title="statement not covered" >            className="px-4 py-2 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm flex items-center space-x-1.5"</span>
+<span class="cstat-no" title="statement not covered" >            className="px-4 py-2 rounded-2xl bg-white border border-slate-200/80 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-all shadow-sm flex items-center space-x-1.5"</span>
           &gt;
 <span class="cstat-no" title="statement not covered" >            &lt;Target className="w-3.5 h-3.5 text-amber-500" /&gt;</span>
 <span class="cstat-no" title="statement not covered" >            &lt;span&gt;Define Asset Goal&lt;/span&gt;</span>
@@ -482,32 +476,29 @@ interface HeaderProps {
 <span class="cstat-no" title="statement not covered" >        &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >      &lt;/div&gt;</span>
 &nbsp;
-      {/* Right Header Controls (Theme Toggle, Search, Bell, Profile) */}
+      {/* Right Header Controls (Search, Bell, Profile) */}
 <span class="cstat-no" title="statement not covered" >      &lt;div className="flex items-center space-x-3 self-end md:self-auto"&gt;</span>
-        {/* Dark Mode / Light Mode Toggle */}
-<span class="cstat-no" title="statement not covered" >        &lt;button</span>
-<span class="cstat-no" title="statement not covered" >          onClick={onToggleTheme}</span>
-<span class="cstat-no" title="statement not covered" >          title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}</span>
-<span class="cstat-no" title="statement not covered" >          className="w-10 h-10 rounded-full bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-blue-500 shadow-sm transition-all"</span>
-        &gt;
-<span class="cstat-no" title="statement not covered" >          {theme === 'light' ? &lt;Moon className="w-4.5 h-4.5" /&gt; : &lt;Sun className="w-4.5 h-4.5 text-amber-400" /&gt;}</span>
-<span class="cstat-no" title="statement not covered" >        &lt;/button&gt;</span>
-&nbsp;
-        {/* Search Icon */}
-<span class="cstat-no" title="statement not covered" >        &lt;div className="w-10 h-10 rounded-full bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 flex items-center justify-center text-slate-400 hover:text-slate-600 shadow-sm cursor-pointer transition-all"&gt;</span>
-<span class="cstat-no" title="statement not covered" >          &lt;Search className="w-4.5 h-4.5" /&gt;</span>
+        {/* Search Input */}
+<span class="cstat-no" title="statement not covered" >        &lt;div className="relative hidden md:flex items-center"&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;Search className="w-4 h-4 text-slate-400 absolute left-3" /&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;input</span>
+<span class="cstat-no" title="statement not covered" >            type="text"</span>
+<span class="cstat-no" title="statement not covered" >            placeholder="Search assets, history..."</span>
+<span class="cstat-no" title="statement not covered" >            className="w-56 pl-9 pr-4 py-2 rounded-full bg-white border border-slate-200 text-xs font-medium text-slate-700 outline-none focus:border-[#3464f3] focus:ring-1 focus:ring-[#3464f3] transition-all shadow-sm placeholder:text-slate-400"</span>
+<span class="cstat-no" title="statement not covered" >          /&gt;</span>
 <span class="cstat-no" title="statement not covered" >        &lt;/div&gt;</span>
 &nbsp;
         {/* Notification Bell */}
-<span class="cstat-no" title="statement not covered" >        &lt;div className="w-10 h-10 rounded-full bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 flex items-center justify-center text-slate-400 hover:text-slate-600 shadow-sm cursor-pointer transition-all"&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;div className="relative w-10 h-10 rounded-full bg-white border border-slate-200/80 flex items-center justify-center text-slate-400 hover:text-slate-600 shadow-sm cursor-pointer transition-all"&gt;</span>
 <span class="cstat-no" title="statement not covered" >          &lt;Bell className="w-4.5 h-4.5" /&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;span className="absolute top-1 right-1 w-2.5 h-2.5 bg-rose-500 rounded-full border-2 border-white"&gt;&lt;/span&gt;</span>
 <span class="cstat-no" title="statement not covered" >        &lt;/div&gt;</span>
 &nbsp;
         {/* Neutral Avatar Icon Dropdown */}
 <span class="cstat-no" title="statement not covered" >        &lt;div className="relative"&gt;</span>
 <span class="cstat-no" title="statement not covered" >          &lt;div </span>
 <span class="cstat-no" title="statement not covered" >            onClick={() =&gt; setShowDropdown(!showDropdown)}</span>
-<span class="cstat-no" title="statement not covered" >            className="flex items-center space-x-1 p-1 pl-1 pr-2.5 rounded-full bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm cursor-pointer hover:bg-slate-50 transition-colors"</span>
+<span class="cstat-no" title="statement not covered" >            className="flex items-center space-x-1 p-1 pl-1 pr-2.5 rounded-full bg-white border border-slate-200/80 shadow-sm cursor-pointer hover:bg-slate-50 transition-colors"</span>
           &gt;
 <span class="cstat-no" title="statement not covered" >            &lt;div className="w-9 h-9 rounded-full bg-[#3464f3] text-white font-extrabold text-sm flex items-center justify-center shadow-sm"&gt;</span>
 <span class="cstat-no" title="statement not covered" >              {getInitial()}</span>
@@ -517,10 +508,10 @@ interface HeaderProps {
 &nbsp;
           {/* User Profile / Reset Menu Dropdown */}
 <span class="cstat-no" title="statement not covered" >          {showDropdown &amp;&amp; (</span>
-<span class="cstat-no" title="statement not covered" >            &lt;div className="absolute right-0 top-12 w-48 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xl p-2 z-50 animate-in fade-in duration-150"&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;div className="absolute right-0 top-12 w-48 bg-white rounded-2xl border border-slate-200 shadow-xl p-2 z-50 animate-in fade-in duration-150"&gt;</span>
 <span class="cstat-no" title="statement not covered" >              &lt;button</span>
 <span class="cstat-no" title="statement not covered" >                onClick={() =&gt; { setIsEditingName(true); setShowDropdown(false); }}</span>
-<span class="cstat-no" title="statement not covered" >                className="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center space-x-2"</span>
+<span class="cstat-no" title="statement not covered" >                className="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 flex items-center space-x-2"</span>
               &gt;
 <span class="cstat-no" title="statement not covered" >                &lt;User className="w-3.5 h-3.5 text-slate-500" /&gt;</span>
 <span class="cstat-no" title="statement not covered" >                &lt;span&gt;Edit Profile Name&lt;/span&gt;</span>
@@ -528,7 +519,7 @@ interface HeaderProps {
 &nbsp;
 <span class="cstat-no" title="statement not covered" >              &lt;button</span>
 <span class="cstat-no" title="statement not covered" >                onClick={() =&gt; { setShowDropdown(false); onResetAppData(); }}</span>
-<span class="cstat-no" title="statement not covered" >                className="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 flex items-center space-x-2"</span>
+<span class="cstat-no" title="statement not covered" >                className="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 flex items-center space-x-2"</span>
               &gt;
 <span class="cstat-no" title="statement not covered" >                &lt;RefreshCw className="w-3.5 h-3.5 text-rose-500" /&gt;</span>
 <span class="cstat-no" title="statement not covered" >                &lt;span&gt;Reset App Data&lt;/span&gt;</span>
@@ -547,7 +538,7 @@ interface HeaderProps {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-07-28T10:06:09.696Z
+                at 2026-07-28T21:43:47.760Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

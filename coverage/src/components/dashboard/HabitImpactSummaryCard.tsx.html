@@ -225,38 +225,38 @@ interface HabitImpactSummaryCardProps {
 <span class="cstat-no" title="statement not covered" >  const sp500Growth10Y = annualSavings * ((Math.pow(1 + 0.10, 10) - 1) / 0.10);</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >  return (</span>
-<span class="cstat-no" title="statement not covered" >    &lt;div className="col-span-1 sm:col-span-2 lg:col-span-4 p-5 rounded-2xl bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/40 dark:to-blue-900/40 border border-indigo-100 dark:border-indigo-800/60 flex flex-col justify-between space-y-4 shadow-sm hover:shadow-md transition-shadow"&gt;</span>
+<span class="cstat-no" title="statement not covered" >    &lt;div className="col-span-1 sm:col-span-2 lg:col-span-4 p-5 rounded-2xl bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-100 flex flex-col justify-between space-y-4 shadow-sm hover:shadow-md transition-shadow"&gt;</span>
 <span class="cstat-no" title="statement not covered" >      &lt;div className="flex items-center justify-between"&gt;</span>
 <span class="cstat-no" title="statement not covered" >        &lt;div className="flex items-center space-x-2"&gt;</span>
-<span class="cstat-no" title="statement not covered" >          &lt;div className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-800 text-indigo-600 dark:text-indigo-300 flex items-center justify-center"&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center"&gt;</span>
 <span class="cstat-no" title="statement not covered" >            &lt;Lightbulb className="w-4 h-4" /&gt;</span>
 <span class="cstat-no" title="statement not covered" >          &lt;/div&gt;</span>
-<span class="cstat-no" title="statement not covered" >          &lt;h4 className="font-bold text-slate-900 dark:text-white text-sm font-display"&gt;Habit Impact Summary&lt;/h4&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;h4 className="font-bold text-slate-900 text-sm font-display"&gt;Habit Impact Summary&lt;/h4&gt;</span>
 <span class="cstat-no" title="statement not covered" >        &lt;/div&gt;</span>
-<span class="cstat-no" title="statement not covered" >        &lt;span className="text-[10px] font-bold uppercase tracking-wider text-indigo-500 bg-indigo-100/50 dark:bg-indigo-900/50 px-2 py-1 rounded-full"&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;span className="text-[10px] font-bold uppercase tracking-wider text-indigo-500 bg-indigo-100/50 px-2 py-1 rounded-full"&gt;</span>
           AI Insight
 <span class="cstat-no" title="statement not covered" >        &lt;/span&gt;</span>
 <span class="cstat-no" title="statement not covered" >      &lt;/div&gt;</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >      &lt;div className="space-y-3"&gt;</span>
-<span class="cstat-no" title="statement not covered" >        &lt;p className="text-sm text-slate-700 dark:text-slate-300 font-medium leading-relaxed"&gt;</span>
-<span class="cstat-no" title="statement not covered" >          Reducing this habit by just &lt;span className="font-bold text-indigo-700 dark:text-indigo-400"&gt;15%&lt;/span&gt; ({currencySymbol}{reductionAmount.toFixed(0)}/mo) would fund:</span>
+<span class="cstat-no" title="statement not covered" >        &lt;p className="text-sm text-slate-700 font-medium leading-relaxed"&gt;</span>
+<span class="cstat-no" title="statement not covered" >          Reducing this habit by just &lt;span className="font-bold text-indigo-700"&gt;15%&lt;/span&gt; ({currencySymbol}{reductionAmount.toFixed(0)}/mo) would fund:</span>
 <span class="cstat-no" title="statement not covered" >        &lt;/p&gt;</span>
         
 <span class="cstat-no" title="statement not covered" >        &lt;div className="grid grid-cols-1 sm:grid-cols-2 gap-3"&gt;</span>
-<span class="cstat-no" title="statement not covered" >          &lt;div className="bg-white/60 dark:bg-slate-800/60 p-3 rounded-xl border border-white/40 dark:border-slate-700/50 flex items-start space-x-3"&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;div className="bg-white/60 p-3 rounded-xl border border-white/40 flex items-start space-x-3"&gt;</span>
 <span class="cstat-no" title="statement not covered" >            &lt;Target className="w-5 h-5 text-rose-500 mt-0.5" /&gt;</span>
 <span class="cstat-no" title="statement not covered" >            &lt;div&gt;</span>
-<span class="cstat-no" title="statement not covered" >              &lt;div className="text-xs font-bold text-slate-900 dark:text-white"&gt;{legoSetsPerYear} Vintage Lego Set{legoSetsPerYear &gt; 1 ? 's' : ''}&lt;/div&gt;</span>
-<span class="cstat-no" title="statement not covered" >              &lt;div className="text-[10px] text-slate-500 dark:text-slate-400"&gt;Every single year&lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;div className="text-xs font-bold text-slate-900"&gt;{legoSetsPerYear} Vintage Lego Set{legoSetsPerYear &gt; 1 ? 's' : ''}&lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;div className="text-[10px] text-slate-500"&gt;Every single year&lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >            &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >          &lt;/div&gt;</span>
           
-<span class="cstat-no" title="statement not covered" >          &lt;div className="bg-white/60 dark:bg-slate-800/60 p-3 rounded-xl border border-white/40 dark:border-slate-700/50 flex items-start space-x-3"&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;div className="bg-white/60 p-3 rounded-xl border border-white/40 flex items-start space-x-3"&gt;</span>
 <span class="cstat-no" title="statement not covered" >            &lt;TrendingDown className="w-5 h-5 text-emerald-500 mt-0.5" /&gt;</span>
 <span class="cstat-no" title="statement not covered" >            &lt;div&gt;</span>
-<span class="cstat-no" title="statement not covered" >              &lt;div className="text-xs font-bold text-slate-900 dark:text-white"&gt;{currencySymbol}{Math.round(sp500Growth10Y).toLocaleString()} in S&amp;P 500&lt;/div&gt;</span>
-<span class="cstat-no" title="statement not covered" >              &lt;div className="text-[10px] text-slate-500 dark:text-slate-400"&gt;Compounded over 10 years&lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;div className="text-xs font-bold text-slate-900"&gt;{currencySymbol}{Math.round(sp500Growth10Y).toLocaleString()} in S&amp;P 500&lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;div className="text-[10px] text-slate-500"&gt;Compounded over 10 years&lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >            &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >          &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >        &lt;/div&gt;</span>
@@ -271,7 +271,7 @@ interface HabitImpactSummaryCardProps {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-07-28T10:06:09.696Z
+                at 2026-07-28T21:43:47.760Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

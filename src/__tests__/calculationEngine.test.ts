@@ -1,60 +1,121 @@
 import { describe, it, expect } from 'vitest';
-import { 
-  calculateAlternativeHistory, 
-  runMonteCarloSimulation, 
-  calculateTimeHorizons 
-} from '../services/calculationEngine';
-import { ExpenseState } from '../components/calculator/ExpenseInputForm';
+import { calculateTimeHorizons, runMonteCarloSimulation, calculateAlternativeHistory } from '../services/calculationEngine';
 
-describe('AltCost Compound Engine & Financial Math Suite', () => {
-  const sampleExpense: ExpenseState = {
-    title: 'Daily Coffee Habit',
-    amount: 7,
-    frequency: 'daily',
-    startDate: '2021-01-01',
-  };
+describe('calculationEngine', () => {
+  describe('calculateTimeHorizons', () => {
+    it('calculates 10% compound interest correctly for 1 year', () => {
+      // $1000/month at 10% CAGR
+      const result = calculateTimeHorizons(1000, 10);
+      expect(result.year1).toBeGreaterThan(12000);
+      expect(result.year1).toBeLessThan(13000);
+    });
 
-  it('correctly calculates cumulative cash spent for daily frequency', async () => {
-    const summary = await calculateAlternativeHistory(sampleExpense);
-    expect(summary.totalCashSpent).toBeGreaterThan(0);
-    expect(summary.totalMonths).toBeGreaterThan(60);
-    expect(summary.results.spy.finalAssetValue).toBeGreaterThan(summary.totalCashSpent);
+    it('handles zero spend gracefully', () => {
+      const result = calculateTimeHorizons(0, 10);
+      expect(result.year1).toBe(0);
+      expect(result.year30).toBe(0);
+    });
+
+    it('handles negative spend by treating it as zero', () => {
+      const result = calculateTimeHorizons(-500, 10);
+      expect(result.year1).toBe(0);
+    });
+
+    it('handles extreme time horizons without returning NaN', () => {
+      const result = calculateTimeHorizons(1000, 10);
+      expect(result.year30).toBeGreaterThan(1000000);
+      expect(Number.isNaN(result.year30)).toBe(false);
+    });
+
+    it('allows negative CAGR down to -100%', () => {
+      const result = calculateTimeHorizons(1000, -10);
+      // If $1000 invested monthly and losing 10% annually, final value is less than cash deposited but > 0
+      expect(result.year1).toBeLessThan(12000);
+      expect(result.year1).toBeGreaterThan(0);
+    });
   });
 
-  it('correctly applies habit reduction percentage in scenario modeler', async () => {
-    const fullSummary = await calculateAlternativeHistory(sampleExpense, [], 0);
-    const halfSummary = await calculateAlternativeHistory(sampleExpense, [], 50);
+  describe('runMonteCarloSimulation', () => {
+    it('returns percentiles correctly for baseline simulation', async () => {
+      const result = await runMonteCarloSimulation(1000, 10.5, 0.15, 20, 100);
+      expect(result.p10th).toBeGreaterThan(0);
+      expect(result.p50th).toBeGreaterThan(result.p10th);
+      expect(result.p90th).toBeGreaterThan(result.p50th);
+    });
 
-    expect(halfSummary.totalCashSpent).toBe(Math.round(fullSummary.totalCashSpent / 2));
-    expect(halfSummary.results.spy.finalAssetValue).toBeLessThan(fullSummary.results.spy.finalAssetValue);
+    it('handles zero spend in Monte Carlo', async () => {
+      const result = await runMonteCarloSimulation(0, 10.5, 0.15, 20, 100);
+      expect(result.p10th).toBe(0);
+      expect(result.p90th).toBe(0);
+    });
+
+    it('allows negative CAGR in Monte Carlo', async () => {
+      const result = await runMonteCarloSimulation(1000, -5, 0.1, 20, 100);
+      expect(result.p50th).toBeGreaterThan(0); // Should still have value
+      expect(result.p50th).toBeLessThan(1000 * 12 * 20); // Should be less than principal
+    });
   });
 
-  it('calculates Monte Carlo 1,000 trajectory percentiles correctly (p10th <= p50th <= p90th)', async () => {
-    const monteCarlo = await runMonteCarloSimulation(200, 10.5, 0.15, 20, 100);
-    expect(monteCarlo.p10th).toBeGreaterThan(0);
-    expect(monteCarlo.p50th).toBeGreaterThanOrEqual(monteCarlo.p10th);
-    expect(monteCarlo.p90th).toBeGreaterThanOrEqual(monteCarlo.p50th);
-  });
+  describe('calculateAlternativeHistory', () => {
+    it('computes correct baseline opportunity metrics for standard expense', async () => {
+      const expense = {
+        title: 'Coffee',
+        amount: 5,
+        frequency: 'daily' as const,
+        startDate: '2021-01-01'
+      };
+      
+      const summary = await calculateAlternativeHistory(expense, [], 0, 2.5);
+      
+      expect(summary.totalCashSpent).toBeGreaterThan(0);
+      expect(summary.inflationAdjustedTotalSpent).toBeGreaterThan(summary.totalCashSpent);
+      expect(summary.results.spy).toBeDefined();
+      expect(summary.results.spy.finalAssetValue).toBeGreaterThan(0);
+      expect(summary.opportunityMetrics.opportunityCostDelta).toBeGreaterThanOrEqual(0);
+    });
 
-  it('computes 1, 3, 5, 10, 20, and 30-year time horizons matrix', () => {
-    const horizons = calculateTimeHorizons(200, 10.5);
-    expect(horizons.year1).toBeGreaterThan(0);
-    expect(horizons.year3).toBeGreaterThan(horizons.year1);
-    expect(horizons.year5).toBeGreaterThan(horizons.year3);
-    expect(horizons.year10).toBeGreaterThan(horizons.year5);
-    expect(horizons.year20).toBeGreaterThan(horizons.year10);
-    expect(horizons.year30).toBeGreaterThan(horizons.year20);
-  });
+    it('handles negative or invalid expense amounts safely', async () => {
+      const expense = {
+        title: 'Negative Coffee',
+        amount: -50,
+        frequency: 'monthly' as const,
+        startDate: '2021-01-01'
+      };
+      
+      const summary = await calculateAlternativeHistory(expense, [], 0, 2.5);
+      
+      expect(summary.totalCashSpent).toBe(0);
+      expect(summary.results.spy.finalAssetValue).toBe(0);
+    });
 
-  it('handles zero amount gracefully without NaN errors', async () => {
-    const zeroExpense: ExpenseState = {
-      title: 'Zero Expense',
-      amount: 0,
-      frequency: 'daily',
-      startDate: '2021-01-01',
-    };
-    const summary = await calculateAlternativeHistory(zeroExpense);
-    expect(summary.totalCashSpent).toBe(0);
-    expect(summary.results.spy.finalAssetValue).toBe(0);
+    it('handles extreme reduction percentages cleanly', async () => {
+      const expense = {
+        title: 'Car',
+        amount: 500,
+        frequency: 'monthly' as const,
+        startDate: '2021-01-01'
+      };
+      
+      const summary = await calculateAlternativeHistory(expense, [], 200, 2.5);
+      
+      // Since reduction is capped at 100%, effective spend should be 0
+      expect(summary.totalCashSpent).toBe(0);
+    });
+
+    it('handles leap years seamlessly within date ranges', async () => {
+      const expense = {
+        title: 'Leap Year Check',
+        amount: 10,
+        frequency: 'daily' as const,
+        startDate: '2020-01-01' // 2020 is a leap year, 2024 is a leap year
+      };
+      
+      const summary = await calculateAlternativeHistory(expense, [], 0, 2.5);
+      
+      expect(summary.totalDays).toBeGreaterThan(0);
+      expect(summary.totalMonths).toBeGreaterThan(0);
+      expect(summary.totalYears).toBeGreaterThan(0);
+      expect(Number.isNaN(summary.totalDays)).toBe(false);
+    });
   });
 });

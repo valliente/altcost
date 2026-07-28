@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/183</span>
+                <span class='fraction'>0/199</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/183</span>
+                <span class='fraction'>0/199</span>
             </div>
         
             
@@ -306,7 +306,23 @@
 <a name='L241'></a><a href='#L241'>241</a>
 <a name='L242'></a><a href='#L242'>242</a>
 <a name='L243'></a><a href='#L243'>243</a>
-<a name='L244'></a><a href='#L244'>244</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L244'></a><a href='#L244'>244</a>
+<a name='L245'></a><a href='#L245'>245</a>
+<a name='L246'></a><a href='#L246'>246</a>
+<a name='L247'></a><a href='#L247'>247</a>
+<a name='L248'></a><a href='#L248'>248</a>
+<a name='L249'></a><a href='#L249'>249</a>
+<a name='L250'></a><a href='#L250'>250</a>
+<a name='L251'></a><a href='#L251'>251</a>
+<a name='L252'></a><a href='#L252'>252</a>
+<a name='L253'></a><a href='#L253'>253</a>
+<a name='L254'></a><a href='#L254'>254</a>
+<a name='L255'></a><a href='#L255'>255</a>
+<a name='L256'></a><a href='#L256'>256</a>
+<a name='L257'></a><a href='#L257'>257</a>
+<a name='L258'></a><a href='#L258'>258</a>
+<a name='L259'></a><a href='#L259'>259</a>
+<a name='L260'></a><a href='#L260'>260</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -469,6 +485,22 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -568,8 +600,8 @@ import { CalculationSummary } from '../../services/calculationEngine';
 } from 'lucide-react';
 <span class="cstat-no" title="statement not covered" >import {</span>
   ResponsiveContainer,
-  LineChart,
-  Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   Tooltip,
@@ -711,25 +743,41 @@ interface BenchmarkAnalyticsViewProps {
 <span class="cstat-no" title="statement not covered" >          &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >        &lt;/div&gt;</span>
 &nbsp;
-        {/* Recharts Multi-Asset Line Chart */}
+        {/* Recharts Multi-Asset Area Chart */}
 <span class="cstat-no" title="statement not covered" >        &lt;div className="h-72 w-full min-w-0 pt-2"&gt;</span>
 <span class="cstat-no" title="statement not covered" >          &lt;ResponsiveContainer width="100%" height="100%" minWidth={0}&gt;</span>
-<span class="cstat-no" title="statement not covered" >            &lt;LineChart data={summary ? summary.timeline : []} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}&gt;</span>
-<span class="cstat-no" title="statement not covered" >              &lt;CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} /&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;AreaChart data={summary ? summary.timeline : []} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;defs&gt;</span>
+<span class="cstat-no" title="statement not covered" >                {assetList.map(asset =&gt; (</span>
+<span class="cstat-no" title="statement not covered" >                  &lt;linearGradient key={`color-${asset.id}`} id={`color-${asset.id}`} x1="0" y1="0" x2="0" y2="1"&gt;</span>
+<span class="cstat-no" title="statement not covered" >                    &lt;stop offset="5%" stopColor={asset.color} stopOpacity={0.35} /&gt;</span>
+<span class="cstat-no" title="statement not covered" >                    &lt;stop offset="95%" stopColor={asset.color} stopOpacity={0} /&gt;</span>
+<span class="cstat-no" title="statement not covered" >                  &lt;/linearGradient&gt;</span>
+<span class="cstat-no" title="statement not covered" >                ))}</span>
+<span class="cstat-no" title="statement not covered" >              &lt;/defs&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} opacity={0.6} /&gt;</span>
 <span class="cstat-no" title="statement not covered" >              &lt;XAxis dataKey="dateLabel" stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} /&gt;</span>
 <span class="cstat-no" title="statement not covered" >              &lt;YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} tickFormatter={formatCurrency} /&gt;</span>
 <span class="cstat-no" title="statement not covered" >              &lt;Tooltip</span>
 <span class="cstat-no" title="statement not covered" >                formatter={(val: any) =&gt; [`${currencySymbol}${Number(val).toLocaleString()}`, 'Value']}</span>
-<span class="cstat-no" title="statement not covered" >                contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1)' }}</span>
+<span class="cstat-no" title="statement not covered" >                contentStyle={{ </span>
+<span class="cstat-no" title="statement not covered" >                  borderRadius: '16px', </span>
+<span class="cstat-no" title="statement not covered" >                  border: '1px solid rgba(255,255,255,0.5)', </span>
+<span class="cstat-no" title="statement not covered" >                  boxShadow: '0 10px 40px -10px rgba(0,0,0,0.15)',</span>
+<span class="cstat-no" title="statement not covered" >                  backgroundColor: 'rgba(255, 255, 255, 0.85)',</span>
+<span class="cstat-no" title="statement not covered" >                  backdropFilter: 'blur(12px)',</span>
+<span class="cstat-no" title="statement not covered" >                  color: '#0f172a'</span>
+<span class="cstat-no" title="statement not covered" >                }}</span>
+<span class="cstat-no" title="statement not covered" >                itemStyle={{ fontWeight: 700 }}</span>
 <span class="cstat-no" title="statement not covered" >              /&gt;</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >              {visibleLines.spy &amp;&amp; &lt;Line type="monotone" dataKey="spyValue" name="S&amp;P 500" stroke={ASSET_MODELS.spy.color} strokeWidth={2.5} dot={false} /&gt;}</span>
-<span class="cstat-no" title="statement not covered" >              {visibleLines.lego &amp;&amp; &lt;Line type="monotone" dataKey="legoValue" name="Vintage Lego" stroke={ASSET_MODELS.lego.color} strokeWidth={2.5} dot={false} /&gt;}</span>
-<span class="cstat-no" title="statement not covered" >              {visibleLines.rolex &amp;&amp; &lt;Line type="monotone" dataKey="rolexValue" name="Rolex" stroke={ASSET_MODELS.rolex.color} strokeWidth={2.5} dot={false} /&gt;}</span>
-<span class="cstat-no" title="statement not covered" >              {visibleLines.cards &amp;&amp; &lt;Line type="monotone" dataKey="cardsValue" name="Trading Cards" stroke={ASSET_MODELS.cards.color} strokeWidth={2.5} dot={false} /&gt;}</span>
-<span class="cstat-no" title="statement not covered" >              {visibleLines.gold &amp;&amp; &lt;Line type="monotone" dataKey="goldValue" name="Gold" stroke={ASSET_MODELS.gold.color} strokeWidth={2.5} dot={false} /&gt;}</span>
-<span class="cstat-no" title="statement not covered" >              {visibleLines.btc &amp;&amp; &lt;Line type="monotone" dataKey="btcValue" name="Bitcoin" stroke={ASSET_MODELS.btc.color} strokeWidth={2.5} dot={false} /&gt;}</span>
-<span class="cstat-no" title="statement not covered" >            &lt;/LineChart&gt;</span>
+<span class="cstat-no" title="statement not covered" >              {visibleLines.spy &amp;&amp; &lt;Area type="monotone" dataKey="spyValue" name="S&amp;P 500" stroke={ASSET_MODELS.spy.color} fillOpacity={1} fill={`url(#color-spy)`} strokeWidth={2.5} dot={false} activeDot={{ r: 5, fill: ASSET_MODELS.spy.color, stroke: '#fff', strokeWidth: 2 }} /&gt;}</span>
+<span class="cstat-no" title="statement not covered" >              {visibleLines.lego &amp;&amp; &lt;Area type="monotone" dataKey="legoValue" name="Vintage Lego" stroke={ASSET_MODELS.lego.color} fillOpacity={1} fill={`url(#color-lego)`} strokeWidth={2.5} dot={false} activeDot={{ r: 5, fill: ASSET_MODELS.lego.color, stroke: '#fff', strokeWidth: 2 }} /&gt;}</span>
+<span class="cstat-no" title="statement not covered" >              {visibleLines.rolex &amp;&amp; &lt;Area type="monotone" dataKey="rolexValue" name="Rolex" stroke={ASSET_MODELS.rolex.color} fillOpacity={1} fill={`url(#color-rolex)`} strokeWidth={2.5} dot={false} activeDot={{ r: 5, fill: ASSET_MODELS.rolex.color, stroke: '#fff', strokeWidth: 2 }} /&gt;}</span>
+<span class="cstat-no" title="statement not covered" >              {visibleLines.cards &amp;&amp; &lt;Area type="monotone" dataKey="cardsValue" name="Trading Cards" stroke={ASSET_MODELS.cards.color} fillOpacity={1} fill={`url(#color-cards)`} strokeWidth={2.5} dot={false} activeDot={{ r: 5, fill: ASSET_MODELS.cards.color, stroke: '#fff', strokeWidth: 2 }} /&gt;}</span>
+<span class="cstat-no" title="statement not covered" >              {visibleLines.gold &amp;&amp; &lt;Area type="monotone" dataKey="goldValue" name="Gold" stroke={ASSET_MODELS.gold.color} fillOpacity={1} fill={`url(#color-gold)`} strokeWidth={2.5} dot={false} activeDot={{ r: 5, fill: ASSET_MODELS.gold.color, stroke: '#fff', strokeWidth: 2 }} /&gt;}</span>
+<span class="cstat-no" title="statement not covered" >              {visibleLines.btc &amp;&amp; &lt;Area type="monotone" dataKey="btcValue" name="Bitcoin" stroke={ASSET_MODELS.btc.color} fillOpacity={1} fill={`url(#color-btc)`} strokeWidth={2.5} dot={false} activeDot={{ r: 5, fill: ASSET_MODELS.btc.color, stroke: '#fff', strokeWidth: 2 }} /&gt;}</span>
+<span class="cstat-no" title="statement not covered" >            &lt;/AreaChart&gt;</span>
 <span class="cstat-no" title="statement not covered" >          &lt;/ResponsiveContainer&gt;</span>
 <span class="cstat-no" title="statement not covered" >        &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >      &lt;/div&gt;</span>
@@ -799,7 +847,7 @@ interface BenchmarkAnalyticsViewProps {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-07-28T10:06:09.696Z
+                at 2026-07-28T21:43:47.760Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

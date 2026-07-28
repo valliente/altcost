@@ -4,3 +4,6 @@ dist-electron
 .DS_Store
 *.local
 *.log
+dist_electron/  
+dist_electron/
+coverage/

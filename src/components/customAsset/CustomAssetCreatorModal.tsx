@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AssetConfig } from '../../data/assetDataModel';
 import { X, Plus, Sparkles, TrendingUp, DollarSign } from 'lucide-react';
 
@@ -19,6 +19,14 @@ export const CustomAssetCreatorModal: React.FC<CustomAssetCreatorModalProps> = (
   const [color, setColor] = useState('#3464f3');
 
   const presetColors = ['#3464f3', '#ff5c8d', '#fbbd08', '#10b981', '#8b5cf6', '#f97316', '#06b6d4'];
+
+  // Prevent background scrolling while modal is open
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,7 +53,7 @@ export const CustomAssetCreatorModal: React.FC<CustomAssetCreatorModalProps> = (
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200">
       <div className="w-full max-w-md bg-white rounded-3xl p-6 border border-slate-200 shadow-2xl space-y-4 relative">
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <div className="flex items-center space-x-2">

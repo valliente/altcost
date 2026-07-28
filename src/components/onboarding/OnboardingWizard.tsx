@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { User, DollarSign, Calendar, Sparkles, ArrowRight, Check, Tag, RefreshCw } from 'lucide-react';
 import { ExpenseState, FrequencyOption } from '../calculator/ExpenseInputForm';
 
@@ -23,6 +23,14 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onCompleteOn
   const [amount, setAmount] = useState<number | ''>(7);
   const [frequency, setFrequency] = useState<FrequencyOption>('daily');
   const [startDate, setStartDate] = useState('2021-01-01');
+
+  // Prevent background scrolling while modal is open
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
 
   const currencies = [
     { symbol: '$', label: 'USD ($)', code: 'USD' },
@@ -84,7 +92,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onCompleteOn
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300">
       <div className="w-full max-w-lg bg-white rounded-3xl p-8 border border-slate-200/80 shadow-2xl space-y-6 relative overflow-hidden">
         {/* Top Progress Dots */}
         <div className="flex items-center justify-between border-b border-slate-100 pb-4">

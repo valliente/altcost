@@ -1,7 +1,7 @@
 import React, { useState, memo, useMemo, useEffect } from 'react';
 import { MoreHorizontal } from 'lucide-react';
+import { SafeRechartsWrapper } from '../common/SafeRechartsWrapper';
 import {
-  ResponsiveContainer,
   AreaChart,
   Area,
   XAxis,
@@ -125,8 +125,7 @@ export const HistoricalAltCostComparisonChart: React.FC<HistoricalAltCostCompari
       )}
 
       {/* Recharts Canvas */}
-      <div className="h-56 w-full min-w-0">
-        <ResponsiveContainer width="100%" height="100%" minWidth={0}>
+      <SafeRechartsWrapper containerClassName="h-56 w-full min-w-0" width="100%" height="100%" minWidth={0}>
           <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
             <defs>
               {allRenderAssets.map(asset => (
@@ -177,8 +176,7 @@ export const HistoricalAltCostComparisonChart: React.FC<HistoricalAltCostCompari
               />
             ))}
           </AreaChart>
-        </ResponsiveContainer>
-      </div>
+      </SafeRechartsWrapper>
 
       {/* Interactive Legend Toggles */}
       <div className="flex flex-wrap items-center justify-center gap-2 pt-4 border-t border-slate-100 text-[10px] font-bold uppercase tracking-wider text-slate-600">

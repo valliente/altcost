@@ -69,10 +69,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload Windows Executable Artifacts
-        uses: actions/upload-artifact@v4
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
         with:
-          name: AltCost-Windows-Executables
+          name: altcost-windows-installer
           path: |
             dist_electron/*.exe
           retention-days: 7

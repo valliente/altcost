@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
-import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Cell } from 'recharts';
+import { SafeRechartsWrapper } from '../common/SafeRechartsWrapper';
 
 interface PaymentsDiversificationRingProps {
   hasData?: boolean;
@@ -28,8 +29,7 @@ export const PaymentsDiversificationRing: React.FC<PaymentsDiversificationRingPr
         </span>
       </div>
 
-      <div className="relative h-32 w-full flex items-center justify-center my-2">
-        <ResponsiveContainer width="100%" height="100%">
+      <SafeRechartsWrapper containerClassName="h-44 w-full flex-grow my-auto" width="100%" height="100%">
           <PieChart>
             <Pie
               data={chartData}
@@ -47,15 +47,14 @@ export const PaymentsDiversificationRing: React.FC<PaymentsDiversificationRingPr
               ))}
             </Pie>
           </PieChart>
-        </ResponsiveContainer>
+      </SafeRechartsWrapper>
 
-        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+      {/* Legend */}<div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
           <span className="text-xl font-extrabold text-slate-900 font-mono">
             {hasData ? `${totalPercent}%` : '0%'}
           </span>
           <span className="text-[9px] text-slate-400 font-semibold uppercase">Habits</span>
         </div>
-      </div>
 
       <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-100">
         <div className="flex items-center space-x-1.5">
