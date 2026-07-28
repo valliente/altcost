@@ -24,7 +24,7 @@ export const KpiBlueCard: React.FC<KpiBlueCardProps> = memo(({
           <PiggyBank className="w-5 h-5 text-[#3464f3]" />
         </div>
 
-        <div className="flex items-center space-x-1 text-xs text-slate-400 hover:text-slate-600">
+        <div className="flex items-center space-x-1 text-[10px] font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2 py-1 rounded-full cursor-pointer hover:bg-blue-100 transition-colors">
           <span>{timeframe}</span>
           <ChevronDown className="w-3.5 h-3.5" />
         </div>
@@ -43,7 +43,7 @@ export const KpiBlueCard: React.FC<KpiBlueCardProps> = memo(({
         {barHeights.map((h, i) => (
           <div
             key={i}
-            className={`w-full rounded-t-sm transition-all duration-500 ${
+            className={`w-full rounded-t-sm transition-all duration-1000 ease-out ${
               hasData ? 'bg-[#3464f3]' : 'bg-slate-200/80'
             }`}
             style={{ height: `${h}%` }}

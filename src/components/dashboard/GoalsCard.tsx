@@ -47,6 +47,7 @@ export const GoalsCard: React.FC<GoalsCardProps> = memo(({
               strokeDashoffset={strokeDashoffset}
               strokeLinecap="round"
               fill="transparent"
+              className="transition-all duration-1000 ease-out"
             />
           )}
         </svg>
@@ -80,7 +81,7 @@ export const GoalsCard: React.FC<GoalsCardProps> = memo(({
             <h5 className="font-bold text-slate-800 text-xs md:text-sm font-display">
               {hasData && goals.length > 0 ? goals[0].title : 'Add Target Asset'}
             </h5>
-            <span className="text-[11px] text-slate-400 font-medium">
+            <span className="inline-block mt-1 text-[10px] font-bold uppercase tracking-wider text-purple-600 bg-purple-100/60 px-2 py-0.5 rounded-full">
               {hasData && goals.length > 0 ? goals[0].category : 'Finance Goal'}
             </span>
           </div>

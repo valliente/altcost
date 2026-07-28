@@ -22,7 +22,7 @@ export const SellsEquivalentCard: React.FC<SellsEquivalentCardProps> = memo(({ u
           <ShoppingBag className="w-5 h-5 text-pink-500" />
         </div>
 
-        <button className="flex items-center space-x-1 text-xs text-slate-400 hover:text-slate-600">
+        <button className="flex items-center space-x-1 text-[10px] font-bold uppercase tracking-wider text-pink-600 bg-pink-50 px-2 py-1 rounded-full hover:bg-pink-100 transition-colors">
           <span>{timeframe}</span>
           <ChevronDown className="w-3.5 h-3.5" />
         </button>
