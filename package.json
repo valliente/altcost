@@ -1,7 +1,7 @@
 {
   "name": "altcost",
   "version": "0.1.407",
-  "description": "Alternative History Asset Comparison Engine - UI Overhaul & Bug Fixes Release",
+  "description": "Alternative History Asset Comparison Engine - UI Overhaul & Bug Fix Release",
   "private": true,
   "type": "module",
   "main": "electron/main.js",
