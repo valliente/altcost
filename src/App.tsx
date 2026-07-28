@@ -480,6 +480,7 @@ export default function App() {
                     <HistoricalAltCostComparisonChart
                       timeline={summary ? summary.timeline : []}
                       hasData={hasActiveData}
+                      customAssets={customAssets}
                     />
                   </div>
 
