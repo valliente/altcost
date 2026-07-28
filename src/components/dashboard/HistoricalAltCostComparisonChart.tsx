@@ -2,8 +2,8 @@ import React, { memo } from 'react';
 import { MoreHorizontal } from 'lucide-react';
 import {
   ResponsiveContainer,
-  LineChart,
-  Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   Tooltip,
@@ -67,8 +67,26 @@ export const HistoricalAltCostComparisonChart: React.FC<HistoricalAltCostCompari
       {/* Recharts Canvas matching image_2.png */}
       <div className="h-56 w-full min-w-0">
         <ResponsiveContainer width="100%" height="100%" minWidth={0}>
-          <LineChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={true} />
+          <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+            <defs>
+              <linearGradient id="colorSpend" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#3464f3" stopOpacity={0.35}/>
+                <stop offset="95%" stopColor="#3464f3" stopOpacity={0}/>
+              </linearGradient>
+              <linearGradient id="colorLego" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#ff5c8d" stopOpacity={0.35}/>
+                <stop offset="95%" stopColor="#ff5c8d" stopOpacity={0}/>
+              </linearGradient>
+              <linearGradient id="colorRolex" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#fbbd08" stopOpacity={0.35}/>
+                <stop offset="95%" stopColor="#fbbd08" stopOpacity={0}/>
+              </linearGradient>
+              <linearGradient id="colorSpy" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#10b981" stopOpacity={0.35}/>
+                <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={true} opacity={0.6} />
             <XAxis dataKey="name" stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} />
             <YAxis
               stroke="#94a3b8"
@@ -78,37 +96,61 @@ export const HistoricalAltCostComparisonChart: React.FC<HistoricalAltCostCompari
               tickFormatter={formatCurrency}
               domain={[0, 'auto']}
             />
-            {hasData && <Tooltip />}
+            {hasData && (
+              <Tooltip 
+                contentStyle={{ 
+                  borderRadius: '16px', 
+                  border: '1px solid rgba(255,255,255,0.5)', 
+                  boxShadow: '0 10px 40px -10px rgba(0,0,0,0.15)',
+                  backgroundColor: 'rgba(255, 255, 255, 0.85)',
+                  backdropFilter: 'blur(12px)',
+                  color: '#0f172a'
+                }}
+                itemStyle={{ fontWeight: 700 }}
+              />
+            )}
 
-            <Line
+            <Area
               type="monotone"
               dataKey="spend"
               stroke="#3464f3"
+              fillOpacity={1}
+              fill="url(#colorSpend)"
               strokeWidth={2.5}
-              dot={{ r: 4, fill: '#3464f3' }}
+              dot={false}
+              activeDot={{ r: 6, fill: '#3464f3', stroke: '#fff', strokeWidth: 2 }}
             />
-            <Line
+            <Area
               type="monotone"
               dataKey="lego"
               stroke="#ff5c8d"
+              fillOpacity={1}
+              fill="url(#colorLego)"
               strokeWidth={2.5}
-              dot={{ r: 4, fill: '#ff5c8d' }}
+              dot={false}
+              activeDot={{ r: 6, fill: '#ff5c8d', stroke: '#fff', strokeWidth: 2 }}
             />
-            <Line
+            <Area
               type="monotone"
               dataKey="rolex"
               stroke="#fbbd08"
+              fillOpacity={1}
+              fill="url(#colorRolex)"
               strokeWidth={2.5}
-              dot={{ r: 4, fill: '#fbbd08' }}
+              dot={false}
+              activeDot={{ r: 6, fill: '#fbbd08', stroke: '#fff', strokeWidth: 2 }}
             />
-            <Line
+            <Area
               type="monotone"
               dataKey="spy"
               stroke="#10b981"
+              fillOpacity={1}
+              fill="url(#colorSpy)"
               strokeWidth={2.5}
-              dot={{ r: 4, fill: '#10b981' }}
+              dot={false}
+              activeDot={{ r: 6, fill: '#10b981', stroke: '#fff', strokeWidth: 2 }}
             />
-          </LineChart>
+          </AreaChart>
         </ResponsiveContainer>
       </div>
 

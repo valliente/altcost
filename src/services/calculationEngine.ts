@@ -148,7 +148,10 @@ export async function calculateAlternativeHistory(
   reductionPercentage: number = 0,
   annualInflationRate: number = 2.5 // CPI Inflation adjustment (2.5%)
 ): Promise<CalculationSummary> {
-  const startDate = new Date(expense.startDate || '2021-01-01');
+  let startDate = new Date(expense.startDate || '2021-01-01');
+  if (isNaN(startDate.getTime())) {
+    startDate = new Date('2021-01-01'); // Fallback for invalid date
+  }
   const endDate = new Date('2026-07-01');
   
   const diffTime = Math.max(0, endDate.getTime() - startDate.getTime());
@@ -156,14 +159,20 @@ export async function calculateAlternativeHistory(
   const totalMonths = Math.max(1, Math.floor(totalDays / 30.4375));
   const totalYears = Math.max(0.1, totalDays / 365.25);
 
-  let rawMonthlySpend = expense.amount || 0;
-  if (expense.frequency === 'daily') {
-    rawMonthlySpend = (expense.amount || 0) * 30.4375;
-  } else if (expense.frequency === 'weekly') {
-    rawMonthlySpend = ((expense.amount || 0) * 52) / 12;
+  let safeAmount = Number(expense.amount);
+  if (isNaN(safeAmount) || safeAmount < 0) {
+    safeAmount = 0;
   }
 
-  const effectiveMonthlySpend = rawMonthlySpend * (1 - reductionPercentage / 100);
+  let rawMonthlySpend = safeAmount;
+  if (expense.frequency === 'daily') {
+    rawMonthlySpend = safeAmount * 30.4375;
+  } else if (expense.frequency === 'weekly') {
+    rawMonthlySpend = (safeAmount * 52) / 12;
+  }
+
+  const safeReduction = Math.min(100, Math.max(0, Number(reductionPercentage) || 0));
+  const effectiveMonthlySpend = rawMonthlySpend * (1 - safeReduction / 100);
   const totalCashSpent = Math.round(effectiveMonthlySpend * totalMonths);
 
   // Inflation purchasing power adjustment

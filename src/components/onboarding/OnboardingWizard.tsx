@@ -16,6 +16,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onCompleteOn
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [userName, setUserName] = useState('');
   const [currency, setCurrency] = useState('$');
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   // Step 3 optional expense state
   const [expenseTitle, setExpenseTitle] = useState('Daily Coffee Habit');
@@ -34,15 +35,26 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onCompleteOn
 
   const handleNextStep1 = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!userName.trim()) return;
-    setStep(2);
+    if (!userName.trim() || isTransitioning) return;
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setStep(2);
+      setIsTransitioning(false);
+    }, 150);
   };
 
   const handleNextStep2 = () => {
-    setStep(3);
+    if (isTransitioning) return;
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setStep(3);
+      setIsTransitioning(false);
+    }, 150);
   };
 
   const handleFinishWithExpense = () => {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
     const profile: UserProfile = {
       name: userName.trim() || 'User',
       currency,
@@ -56,17 +68,19 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onCompleteOn
       startDate,
     };
 
-    onCompleteOnboarding(profile, exp);
+    setTimeout(() => onCompleteOnboarding(profile, exp), 150);
   };
 
   const handleSkipExpense = () => {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
     const profile: UserProfile = {
       name: userName.trim() || 'User',
       currency,
       onboarded: true,
     };
 
-    onCompleteOnboarding(profile, null);
+    setTimeout(() => onCompleteOnboarding(profile, null), 150);
   };
 
   return (
@@ -118,10 +132,10 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onCompleteOn
 
             <button
               type="submit"
-              disabled={!userName.trim()}
+              disabled={!userName.trim() || isTransitioning}
               className="w-full py-3.5 rounded-2xl bg-[#3464f3] text-white font-bold text-sm hover:bg-[#2553db] transition-all disabled:opacity-50 flex items-center justify-center space-x-2 shadow-lg shadow-blue-500/25"
             >
-              <span>Continue</span>
+              <span>{isTransitioning ? 'Continuing...' : 'Continue'}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </form>
@@ -162,9 +176,10 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onCompleteOn
 
             <button
               onClick={handleNextStep2}
-              className="w-full py-3.5 rounded-2xl bg-[#3464f3] text-white font-bold text-sm hover:bg-[#2553db] transition-all flex items-center justify-center space-x-2 shadow-lg shadow-blue-500/25"
+              disabled={isTransitioning}
+              className="w-full py-3.5 rounded-2xl bg-[#3464f3] text-white font-bold text-sm hover:bg-[#2553db] transition-all disabled:opacity-50 flex items-center justify-center space-x-2 shadow-lg shadow-blue-500/25"
             >
-              <span>Next: Expense Setup</span>
+              <span>{isTransitioning ? 'Loading...' : 'Next: Expense Setup'}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>

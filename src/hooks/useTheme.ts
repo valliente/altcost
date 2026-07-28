@@ -1,31 +1,20 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 
-export type ThemeMode = 'light' | 'dark';
-const STORAGE_KEY = 'altcost_v0.1.405_theme';
+export type ThemeMode = 'light';
+const STORAGE_KEY = 'altcost_v0.1.407_theme';
 
 export function useTheme() {
-  const [theme, setTheme] = useState<ThemeMode>(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved === 'dark' || saved === 'light') return saved;
-      return 'light'; // Default to vibrant light mode
-    } catch (e) {
-      return 'light';
-    }
-  });
+  const theme: ThemeMode = 'light';
 
   useEffect(() => {
     const root = document.documentElement;
-    if (theme === 'dark') {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
-    }
+    root.classList.remove('dark');
     localStorage.setItem(STORAGE_KEY, theme);
-  }, [theme]);
+  }, []);
 
   const toggleTheme = useCallback(() => {
-    setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
+    // No-op for v0.1.407 strict light mode
+    console.warn("Dark mode has been disabled in v0.1.407 to enforce the vibrant light theme.");
   }, []);
 
   return { theme, toggleTheme };

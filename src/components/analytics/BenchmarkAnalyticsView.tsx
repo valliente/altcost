@@ -17,8 +17,8 @@ import {
 } from 'lucide-react';
 import {
   ResponsiveContainer,
-  LineChart,
-  Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   Tooltip,
@@ -160,25 +160,41 @@ export const BenchmarkAnalyticsView: React.FC<BenchmarkAnalyticsViewProps> = ({
           </div>
         </div>
 
-        {/* Recharts Multi-Asset Line Chart */}
+        {/* Recharts Multi-Asset Area Chart */}
         <div className="h-72 w-full min-w-0 pt-2">
           <ResponsiveContainer width="100%" height="100%" minWidth={0}>
-            <LineChart data={summary ? summary.timeline : []} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+            <AreaChart data={summary ? summary.timeline : []} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+              <defs>
+                {assetList.map(asset => (
+                  <linearGradient key={`color-${asset.id}`} id={`color-${asset.id}`} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={asset.color} stopOpacity={0.35} />
+                    <stop offset="95%" stopColor={asset.color} stopOpacity={0} />
+                  </linearGradient>
+                ))}
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} opacity={0.6} />
               <XAxis dataKey="dateLabel" stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} />
               <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} tickFormatter={formatCurrency} />
               <Tooltip
                 formatter={(val: any) => [`${currencySymbol}${Number(val).toLocaleString()}`, 'Value']}
-                contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1)' }}
+                contentStyle={{ 
+                  borderRadius: '16px', 
+                  border: '1px solid rgba(255,255,255,0.5)', 
+                  boxShadow: '0 10px 40px -10px rgba(0,0,0,0.15)',
+                  backgroundColor: 'rgba(255, 255, 255, 0.85)',
+                  backdropFilter: 'blur(12px)',
+                  color: '#0f172a'
+                }}
+                itemStyle={{ fontWeight: 700 }}
               />
 
-              {visibleLines.spy && <Line type="monotone" dataKey="spyValue" name="S&P 500" stroke={ASSET_MODELS.spy.color} strokeWidth={2.5} dot={false} />}
-              {visibleLines.lego && <Line type="monotone" dataKey="legoValue" name="Vintage Lego" stroke={ASSET_MODELS.lego.color} strokeWidth={2.5} dot={false} />}
-              {visibleLines.rolex && <Line type="monotone" dataKey="rolexValue" name="Rolex" stroke={ASSET_MODELS.rolex.color} strokeWidth={2.5} dot={false} />}
-              {visibleLines.cards && <Line type="monotone" dataKey="cardsValue" name="Trading Cards" stroke={ASSET_MODELS.cards.color} strokeWidth={2.5} dot={false} />}
-              {visibleLines.gold && <Line type="monotone" dataKey="goldValue" name="Gold" stroke={ASSET_MODELS.gold.color} strokeWidth={2.5} dot={false} />}
-              {visibleLines.btc && <Line type="monotone" dataKey="btcValue" name="Bitcoin" stroke={ASSET_MODELS.btc.color} strokeWidth={2.5} dot={false} />}
-            </LineChart>
+              {visibleLines.spy && <Area type="monotone" dataKey="spyValue" name="S&P 500" stroke={ASSET_MODELS.spy.color} fillOpacity={1} fill={`url(#color-spy)`} strokeWidth={2.5} dot={false} activeDot={{ r: 5, fill: ASSET_MODELS.spy.color, stroke: '#fff', strokeWidth: 2 }} />}
+              {visibleLines.lego && <Area type="monotone" dataKey="legoValue" name="Vintage Lego" stroke={ASSET_MODELS.lego.color} fillOpacity={1} fill={`url(#color-lego)`} strokeWidth={2.5} dot={false} activeDot={{ r: 5, fill: ASSET_MODELS.lego.color, stroke: '#fff', strokeWidth: 2 }} />}
+              {visibleLines.rolex && <Area type="monotone" dataKey="rolexValue" name="Rolex" stroke={ASSET_MODELS.rolex.color} fillOpacity={1} fill={`url(#color-rolex)`} strokeWidth={2.5} dot={false} activeDot={{ r: 5, fill: ASSET_MODELS.rolex.color, stroke: '#fff', strokeWidth: 2 }} />}
+              {visibleLines.cards && <Area type="monotone" dataKey="cardsValue" name="Trading Cards" stroke={ASSET_MODELS.cards.color} fillOpacity={1} fill={`url(#color-cards)`} strokeWidth={2.5} dot={false} activeDot={{ r: 5, fill: ASSET_MODELS.cards.color, stroke: '#fff', strokeWidth: 2 }} />}
+              {visibleLines.gold && <Area type="monotone" dataKey="goldValue" name="Gold" stroke={ASSET_MODELS.gold.color} fillOpacity={1} fill={`url(#color-gold)`} strokeWidth={2.5} dot={false} activeDot={{ r: 5, fill: ASSET_MODELS.gold.color, stroke: '#fff', strokeWidth: 2 }} />}
+              {visibleLines.btc && <Area type="monotone" dataKey="btcValue" name="Bitcoin" stroke={ASSET_MODELS.btc.color} fillOpacity={1} fill={`url(#color-btc)`} strokeWidth={2.5} dot={false} activeDot={{ r: 5, fill: ASSET_MODELS.btc.color, stroke: '#fff', strokeWidth: 2 }} />}
+            </AreaChart>
           </ResponsiveContainer>
         </div>
       </div>

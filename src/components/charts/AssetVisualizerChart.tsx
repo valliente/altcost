@@ -51,18 +51,18 @@ export const AssetVisualizerChart: React.FC<AssetVisualizerChartProps> = memo(({
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="glass-card p-3.5 rounded-xl border border-slate-700 shadow-2xl text-xs space-y-1.5 backdrop-blur-xl">
-          <p className="font-bold text-slate-200 border-b border-slate-800 pb-1 flex items-center justify-between">
+        <div className="glass-card p-3.5 rounded-2xl border border-white/50 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15)] text-xs space-y-1.5 bg-white/85 backdrop-blur-xl">
+          <p className="font-bold text-slate-800 border-b border-slate-200 pb-1 flex items-center justify-between">
             <span>Year {label}</span>
             <span className="text-[10px] text-slate-500 font-mono">DCA Compounded</span>
           </p>
           {payload.map((item: any) => (
             <div key={item.name} className="flex items-center justify-between space-x-6">
-              <span className="flex items-center space-x-1.5 font-medium" style={{ color: item.color }}>
+              <span className="flex items-center space-x-1.5 font-medium text-slate-700">
                 <span className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
                 <span>{item.name}:</span>
               </span>
-              <span className="font-mono font-bold text-slate-100">${item.value.toLocaleString()}</span>
+              <span className="font-mono font-bold text-slate-900">${item.value.toLocaleString()}</span>
             </div>
           ))}
         </div>
@@ -72,15 +72,15 @@ export const AssetVisualizerChart: React.FC<AssetVisualizerChartProps> = memo(({
   };
 
   return (
-    <div className="glass-card rounded-2xl p-6 border border-slate-800 space-y-6">
+    <div className="light-card rounded-3xl p-6 bg-white border border-slate-200/80 space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
-            <ChartIcon className="w-4 h-4 text-cyan-400" />
+          <div className="w-8 h-8 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center">
+            <ChartIcon className="w-4 h-4 text-[#3464f3]" />
           </div>
           <div>
-            <h3 className="text-lg font-bold font-display text-white">Historical Portfolio Growth</h3>
-            <p className="text-xs text-slate-400">Side-by-side cumulative compounding over time</p>
+            <h3 className="text-lg font-bold font-display text-slate-900">Historical Portfolio Growth</h3>
+            <p className="text-xs text-slate-500">Side-by-side cumulative compounding over time</p>
           </div>
         </div>
 
@@ -92,10 +92,10 @@ export const AssetVisualizerChart: React.FC<AssetVisualizerChartProps> = memo(({
               <button
                 key={series.key}
                 onClick={() => toggleAsset(series.key)}
-                className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center space-x-1.5 border transition-all ${
+                className={`px-2.5 py-1 rounded-xl text-xs font-semibold flex items-center space-x-1.5 border transition-all ${
                   isVisible
-                    ? 'bg-slate-800/80 text-slate-100 border-slate-600 shadow-sm'
-                    : 'bg-slate-900/40 text-slate-500 border-slate-800 opacity-60'
+                    ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
+                    : 'bg-slate-100 text-slate-400 border-slate-200 opacity-60'
                 }`}
               >
                 <span
@@ -123,19 +123,19 @@ export const AssetVisualizerChart: React.FC<AssetVisualizerChartProps> = memo(({
               ))}
             </defs>
 
-            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} opacity={0.6} />
             <XAxis
               dataKey="dateLabel"
-              stroke="#64748b"
+              stroke="#94a3b8"
               fontSize={12}
               tickLine={false}
-              axisLine={{ stroke: '#334155' }}
+              axisLine={{ stroke: '#f1f5f9' }}
             />
             <YAxis
-              stroke="#64748b"
+              stroke="#94a3b8"
               fontSize={12}
               tickLine={false}
-              axisLine={{ stroke: '#334155' }}
+              axisLine={{ stroke: '#f1f5f9' }}
               tickFormatter={formatCurrency}
             />
             <Tooltip content={<CustomTooltip />} />

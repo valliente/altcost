@@ -22,7 +22,7 @@ import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { useTheme } from './hooks/useTheme';
 import { SlidersHorizontal, X, RotateCcw, AlertTriangle, Trash2 } from 'lucide-react';
 
-const VERSION_KEY_PREFIX = 'altcost_v0.1.405_';
+const VERSION_KEY_PREFIX = 'altcost_v0.1.407_';
 
 export default function App() {
   const { theme, toggleTheme } = useTheme();
@@ -258,7 +258,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f3f4f8] dark:bg-[#090d16] text-slate-900 dark:text-slate-100 flex overflow-x-hidden font-sans transition-colors duration-200">
+    <div className="min-h-screen bg-[#f3f4f8][#090d16] text-slate-900 flex overflow-x-hidden font-sans transition-colors duration-200">
       {/* Onboarding Wizard Modal on Fresh Launch */}
       {!userProfile && (
         <OnboardingWizard onCompleteOnboarding={handleCompleteOnboarding} />
@@ -267,14 +267,14 @@ export default function App() {
       {/* Database Inspector & Purge Modal */}
       {showResetConfirmModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="w-full max-w-md bg-white dark:bg-slate-800 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-2xl space-y-5">
+          <div className="w-full max-w-md bg-white rounded-3xl p-6 border border-slate-200 shadow-2xl space-y-5">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-900/40 text-amber-600 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center">
                   <AlertTriangle className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-slate-900 dark:text-white text-base font-display">Database Inspector</h4>
+                  <h4 className="font-bold text-slate-900 text-base font-display">Database Inspector</h4>
                   <p className="text-xs text-slate-500">v0.1.405 Isolated Storage</p>
                 </div>
               </div>
@@ -283,7 +283,7 @@ export default function App() {
               </button>
             </div>
             
-            <div className="space-y-2 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-2xl border border-slate-200 dark:border-slate-700">
+            <div className="space-y-2 bg-slate-50 p-4 rounded-2xl border border-slate-200">
               <h5 className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Storage Usage</h5>
               {[
                 { name: 'User Profile', size: localStorage.getItem(`${VERSION_KEY_PREFIX}user_profile`)?.length || 0 },
@@ -293,8 +293,8 @@ export default function App() {
                 { name: 'Goals', size: localStorage.getItem(`${VERSION_KEY_PREFIX}goals`)?.length || 0 }
               ].map(item => (
                 <div key={item.name} className="flex justify-between items-center text-xs">
-                  <span className="text-slate-600 dark:text-slate-400 font-medium">{item.name}</span>
-                  <span className="font-mono text-slate-900 dark:text-slate-200">{item.size > 0 ? (item.size / 1024).toFixed(2) + ' KB' : 'Empty'}</span>
+                  <span className="text-slate-600 font-medium">{item.name}</span>
+                  <span className="font-mono text-slate-900">{item.size > 0 ? (item.size / 1024).toFixed(2) + ' KB' : 'Empty'}</span>
                 </div>
               ))}
             </div>
@@ -347,7 +347,7 @@ export default function App() {
                 <div className="flex items-center space-x-2 shrink-0">
                   <button
                     onClick={() => setShowConfigModal(!showConfigModal)}
-                    className="px-4 py-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 flex items-center justify-center space-x-2 shadow-sm hover:bg-slate-50 transition-colors"
+                    className="px-4 py-3 rounded-2xl bg-white border border-slate-200/80 text-xs font-bold text-slate-700 flex items-center justify-center space-x-2 shadow-sm hover:bg-slate-50 transition-colors"
                   >
                     <SlidersHorizontal className="w-4 h-4 text-[#3464f3]" />
                     <span>{hasActiveData ? 'Modify Expense' : 'Configure Engine'}</span>
@@ -356,7 +356,7 @@ export default function App() {
                   <button
                     onClick={() => setShowResetConfirmModal(true)}
                     title="Reset App Data & Restart Setup"
-                    className="p-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-slate-400 hover:text-rose-600 shadow-sm transition-colors"
+                    className="p-3 rounded-2xl bg-white border border-slate-200/80 text-slate-400 hover:text-rose-600 shadow-sm transition-colors"
                   >
                     <RotateCcw className="w-4 h-4" />
                   </button>
@@ -403,9 +403,9 @@ export default function App() {
 
               {/* Goal Modal */}
               {showGoalModal && (
-                <div className="p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xl space-y-3 animate-in fade-in duration-200">
+                <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xl space-y-3 animate-in fade-in duration-200">
                   <div className="flex items-center justify-between">
-                    <h4 className="font-bold text-slate-900 dark:text-white text-sm">Define Target Asset Goal</h4>
+                    <h4 className="font-bold text-slate-900 text-sm">Define Target Asset Goal</h4>
                     <button onClick={() => setShowGoalModal(false)} className="text-slate-400">
                       <X className="w-4 h-4" />
                     </button>
