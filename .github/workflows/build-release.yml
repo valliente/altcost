@@ -65,7 +65,7 @@ jobs:
         run: npm run build
 
       - name: Execute Electron-Builder for Windows (.exe)
-        run: npx electron-builder --win nsis portable
+        run: npx electron-builder --win nsis
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -74,24 +74,22 @@ jobs:
         with:
           name: AltCost-Windows-Executables
           path: |
-            dist-electron/*.exe
+            dist_electron/*.exe
           retention-days: 7
 
-      - name: Publish GitHub Tag Release & Upload Binaries
+      - name: Publish GitHub Release (Full Main Release)
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            dist-electron/*.exe
-            dist-electron/*.blockmap
+            dist_electron/*.exe
           draft: false
           prerelease: false
-          name: Release ${{ github.ref_name }}
+          name: AltCost v0.1.1 Release
           body: |
-            ## 🚀 AltCost Alternative History Asset Comparison Engine - ${{ github.ref_name }}
+            ## 🚀 AltCost Alternative History Asset Comparison Engine - v0.1.1 Full Release
 
-            ### 📦 Download Desktop Executables:
-            - **Windows Installer (`.exe`)**: Standard desktop installer with desktop shortcuts.
-            - **Windows Portable (`.exe`)**: Zero-install standalone executable.
+            ### 📦 Download Desktop Executable:
+            - **Windows Installer (`AltCost Setup 0.1.1.exe`)**: Standard NSIS desktop installer.
 
             ### 🌐 Web Application:
             Access live web build on GitHub Pages.
