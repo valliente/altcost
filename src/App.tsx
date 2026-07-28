@@ -1,10 +1,20 @@
 import React from 'react';
+import { Header } from './components/layout/Header';
+import { Sidebar } from './components/layout/Sidebar';
+import { HeroSection } from './components/layout/HeroSection';
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-[#090d16] text-white p-8">
-      <h1 className="text-3xl font-bold font-display text-emerald-400">AltCost Engine</h1>
-      <p className="text-slate-400 mt-2">Alternative History Asset Comparison Engine initialized.</p>
+    <div className="min-h-screen bg-[#090d16] text-slate-100 flex flex-col">
+      <Header />
+      
+      <div className="flex-1 flex overflow-hidden">
+        <Sidebar />
+        
+        <main className="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 max-w-7xl mx-auto w-full">
+          <HeroSection />
+        </main>
+      </div>
     </div>
   );
 }
