@@ -2,6 +2,9 @@ name: AltCost Build & Release Pipeline
 
 on:
   push:
+    branches:
+      - main
+      - master
     tags:
       - 'v*.*.*'
   workflow_dispatch:
@@ -12,8 +15,38 @@ permissions:
   id-token: write
 
 jobs:
-  build-and-release:
+  web-deploy:
+    name: Build & Deploy Web App (GitHub Pages)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Web Application
+        run: npm run build
+
+      - name: Deploy to GitHub Pages Branch
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: gh-pages
+          commit_message: "deploy: automated web app build for ${{ github.sha }}"
+
+  desktop-release:
+    name: Build Desktop Release Executable (.exe)
     runs-on: windows-latest
+    needs: web-deploy
+    if: startsWith(github.ref, 'refs/tags/v')
 
     steps:
       - name: Checkout Source Repository
@@ -31,21 +64,13 @@ jobs:
       - name: Build Web Production Assets
         run: npm run build
 
-      - name: Deploy Web App to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-
-      - name: Compile Desktop Executable (.exe)
+      - name: Compile Windows Executable Output (.exe)
         run: npm run dist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Create GitHub Release & Upload Executable Assets
+      - name: Create GitHub Tag Release & Upload Executables
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
             dist-electron/*.exe
