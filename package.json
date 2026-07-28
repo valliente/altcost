@@ -1,7 +1,7 @@
 {
   "name": "altcost",
   "version": "0.1.2",
-  "description": "Alternative History Asset Comparison Engine",
+  "description": "Alternative History Asset Comparison Engine - Dynamic Onboarding Update",
   "private": true,
   "type": "module",
   "main": "electron/main.cjs",

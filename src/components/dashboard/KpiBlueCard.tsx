@@ -1,12 +1,17 @@
 import React, { useState, memo } from 'react';
-import { ChevronDown, PiggyBank, DollarSign } from 'lucide-react';
+import { ChevronDown, PiggyBank } from 'lucide-react';
 
 interface KpiBlueCardProps {
   totalSpend?: number;
+  currencySymbol?: string;
   hasData?: boolean;
 }
 
-export const KpiBlueCard: React.FC<KpiBlueCardProps> = memo(({ totalSpend = 0, hasData = false }) => {
+export const KpiBlueCard: React.FC<KpiBlueCardProps> = memo(({ 
+  totalSpend = 0, 
+  currencySymbol = '$',
+  hasData = false 
+}) => {
   const [timeframe, setTimeframe] = useState('7 days');
 
   const barHeights = hasData ? [40, 25, 60, 45, 80, 50, 95] : [35, 55, 30, 45, 60, 40, 75];
@@ -29,7 +34,7 @@ export const KpiBlueCard: React.FC<KpiBlueCardProps> = memo(({ totalSpend = 0, h
       <div className="my-2 space-y-1">
         <span className="text-xs text-slate-400 font-medium">Total Spend Cumulative</span>
         <h3 className="text-2xl md:text-3xl font-extrabold text-slate-900 font-mono tracking-tight">
-          ${totalSpend.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          {currencySymbol}{totalSpend.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
         </h3>
       </div>
 

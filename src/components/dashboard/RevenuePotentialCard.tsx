@@ -5,12 +5,14 @@ import { ResponsiveContainer, AreaChart, Area } from 'recharts';
 interface RevenuePotentialCardProps {
   value?: number;
   rolexValue?: number;
+  currencySymbol?: string;
   hasData?: boolean;
 }
 
 export const RevenuePotentialCard: React.FC<RevenuePotentialCardProps> = memo(({ 
   value = 0, 
   rolexValue = 0,
+  currencySymbol = '$',
   hasData = false 
 }) => {
   const [timeframe, setTimeframe] = useState('7 days');
@@ -37,10 +39,10 @@ export const RevenuePotentialCard: React.FC<RevenuePotentialCardProps> = memo(({
       <div className="my-2 space-y-0.5">
         <span className="text-xs text-slate-400 font-medium">Vintage Lego Worth</span>
         <h3 className="text-2xl font-bold text-slate-900 font-mono">
-          ${value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          {currencySymbol}{value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
         </h3>
         <p className="text-[11px] text-slate-400 font-medium">
-          {hasData ? `Rolex Value: $${rolexValue.toLocaleString()}` : 'Rolex Value'}
+          {hasData ? `Rolex Value: ${currencySymbol}${rolexValue.toLocaleString()}` : 'Rolex Value'}
         </p>
       </div>
 

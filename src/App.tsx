@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Header } from './components/layout/Header';
 import { Sidebar } from './components/layout/Sidebar';
 import { ExpenseInputForm, ExpenseState } from './components/calculator/ExpenseInputForm';
@@ -11,28 +11,88 @@ import { ActivityBubbleChart } from './components/dashboard/ActivityBubbleChart'
 import { HistoricalAltCostComparisonChart } from './components/dashboard/HistoricalAltCostComparisonChart';
 import { PaymentsDiversificationRing } from './components/dashboard/PaymentsDiversificationRing';
 import { GoalsCard, GoalItemData } from './components/dashboard/GoalsCard';
-import { SlidersHorizontal, X, Target, PlusCircle } from 'lucide-react';
+import { OnboardingWizard, UserProfile } from './components/onboarding/OnboardingWizard';
+import { SlidersHorizontal, X, PlusCircle, RotateCcw } from 'lucide-react';
 
 export default function App() {
-  const [userName, setUserName] = useState('Valliente Jefa');
   const [activeTab, setActiveTab] = useState('home');
 
-  // Expense state: starts as null/0 for initial empty state matching image_2.png
-  const [expense, setExpense] = useState<ExpenseState | null>(null);
+  // LocalStorage persistent state or null for onboarding
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(() => {
+    try {
+      const saved = localStorage.getItem('altcost_user_profile');
+      return saved ? JSON.parse(saved) : null;
+    } catch (e) {
+      return null;
+    }
+  });
+
+  const [expense, setExpense] = useState<ExpenseState | null>(() => {
+    try {
+      const saved = localStorage.getItem('altcost_expenses');
+      return saved ? JSON.parse(saved) : null;
+    } catch (e) {
+      return null;
+    }
+  });
+
+  const [customGoals, setCustomGoals] = useState<GoalItemData[]>(() => {
+    try {
+      const saved = localStorage.getItem('altcost_goals');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      return [];
+    }
+  });
 
   const [showConfigModal, setShowConfigModal] = useState(false);
   const [showGoalModal, setShowGoalModal] = useState(false);
 
-  // Custom user goals
-  const [customGoals, setCustomGoals] = useState<GoalItemData[]>([]);
+  // Sync to localStorage
+  useEffect(() => {
+    if (userProfile) {
+      localStorage.setItem('altcost_user_profile', JSON.stringify(userProfile));
+    }
+  }, [userProfile]);
 
-  // Compute live calculation summary when expense is set
+  useEffect(() => {
+    if (expense) {
+      localStorage.setItem('altcost_expenses', JSON.stringify(expense));
+    }
+  }, [expense]);
+
+  useEffect(() => {
+    localStorage.setItem('altcost_goals', JSON.stringify(customGoals));
+  }, [customGoals]);
+
+  // Handle onboarding completion
+  const handleCompleteOnboarding = (profile: UserProfile, initialExpense: ExpenseState | null) => {
+    setUserProfile(profile);
+    if (initialExpense) {
+      setExpense(initialExpense);
+    }
+  };
+
+  // Reset all application data (Clears localStorage & re-triggers Onboarding)
+  const handleResetAppData = () => {
+    localStorage.removeItem('altcost_user_profile');
+    localStorage.removeItem('altcost_expenses');
+    localStorage.removeItem('altcost_goals');
+    setUserProfile(null);
+    setExpense(null);
+    setCustomGoals([]);
+    setShowConfigModal(false);
+    setShowGoalModal(false);
+  };
+
+  // Compute live calculation summary when expense is active
   const summary = useMemo(() => {
     if (!expense || expense.amount <= 0) return null;
     return calculateAlternativeHistory(expense);
   }, [expense]);
 
   const hasActiveData = summary !== null && summary.totalCashSpent > 0;
+  const currencySym = userProfile?.currency || '$';
 
   const handleSelectPreset = (preset: ExpenseState) => {
     setExpense(preset);
@@ -47,6 +107,11 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#f3f4f8] text-slate-900 flex overflow-x-hidden font-sans">
+      {/* Onboarding Wizard Modal if user profile is missing */}
+      {!userProfile && (
+        <OnboardingWizard onCompleteOnboarding={handleCompleteOnboarding} />
+      )}
+
       {/* Left Vertical Icon Sidebar matching image_2.png */}
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
@@ -55,10 +120,12 @@ export default function App() {
         <div className="flex-1 p-6 md:p-8 max-w-[1600px] w-full mx-auto space-y-5">
           {/* Top Header matching image_2.png */}
           <Header
-            userName={userName}
-            onUpdateUserName={setUserName}
+            userName={userProfile?.name || 'User'}
+            currencySymbol={currencySym}
+            onUpdateUserName={(name) => setUserProfile(prev => prev ? { ...prev, name } : { name, currency: '$', onboarded: true })}
             onOpenExpenseModal={() => setShowConfigModal(true)}
             onOpenGoalModal={() => setShowGoalModal(true)}
+            onResetAppData={handleResetAppData}
             hasActiveExpense={hasActiveData}
           />
 
@@ -71,13 +138,23 @@ export default function App() {
               />
             </div>
 
-            <button
-              onClick={() => setShowConfigModal(!showConfigModal)}
-              className="px-4 py-3 rounded-2xl bg-white border border-slate-200/80 text-xs font-bold text-slate-700 flex items-center justify-center space-x-2 shadow-sm hover:bg-slate-50 transition-colors shrink-0"
-            >
-              <SlidersHorizontal className="w-4 h-4 text-[#3464f3]" />
-              <span>{hasActiveData ? 'Modify Expense' : 'Configure Expense Engine'}</span>
-            </button>
+            <div className="flex items-center space-x-2 shrink-0">
+              <button
+                onClick={() => setShowConfigModal(!showConfigModal)}
+                className="px-4 py-3 rounded-2xl bg-white border border-slate-200/80 text-xs font-bold text-slate-700 flex items-center justify-center space-x-2 shadow-sm hover:bg-slate-50 transition-colors"
+              >
+                <SlidersHorizontal className="w-4 h-4 text-[#3464f3]" />
+                <span>{hasActiveData ? 'Modify Expense' : 'Configure Expense Engine'}</span>
+              </button>
+
+              <button
+                onClick={handleResetAppData}
+                title="Reset App Data & Restart Setup"
+                className="p-3 rounded-2xl bg-white border border-slate-200/80 text-slate-400 hover:text-rose-600 hover:bg-rose-50 shadow-sm transition-colors"
+              >
+                <RotateCcw className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
           {/* Modal / Inline Panel for Custom Expense */}
@@ -126,6 +203,7 @@ export default function App() {
             {/* Card 1: Total Spend Cumulative */}
             <KpiBlueCard
               totalSpend={summary ? summary.totalCashSpent : 0}
+              currencySymbol={currencySym}
               hasData={hasActiveData}
             />
 
@@ -139,6 +217,7 @@ export default function App() {
             <RevenuePotentialCard
               value={summary?.results.lego ? summary.results.lego.finalAssetValue : 0}
               rolexValue={summary?.results.rolex ? summary.results.rolex.finalAssetValue : 0}
+              currencySymbol={currencySym}
               hasData={hasActiveData}
             />
 
