@@ -20,7 +20,7 @@ export const PaymentsDiversificationRing: React.FC<PaymentsDiversificationRingPr
       ];
 
   return (
-    <div className="light-card p-6 flex flex-col justify-between h-full min-h-[220px]">
+    <div className="light-card p-6 flex flex-col justify-between h-full min-h-[220px] rounded-2xl bg-white border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow">
       <div className="flex items-center justify-between">
         <h4 className="font-bold text-slate-800 text-sm font-display">Allocation (By Count)</h4>
         <span className="text-[11px] font-mono text-slate-400">

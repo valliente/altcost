@@ -58,7 +58,7 @@ export const GoalsCard: React.FC<GoalsCardProps> = memo(({
   };
 
   return (
-    <div className="light-card p-6 flex flex-col justify-between h-full min-h-[220px]">
+    <div className="light-card p-6 flex flex-col justify-between h-full min-h-[220px] rounded-2xl bg-white border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow">
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <h4 className="font-bold text-slate-800 text-sm md:text-base font-display">

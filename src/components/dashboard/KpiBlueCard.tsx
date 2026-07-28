@@ -17,7 +17,7 @@ export const KpiBlueCard: React.FC<KpiBlueCardProps> = memo(({
   const barHeights = hasData ? [40, 25, 60, 45, 80, 50, 95] : [35, 55, 30, 45, 60, 40, 75];
 
   return (
-    <div className="light-card p-6 flex flex-col justify-between h-full min-h-[220px]">
+    <div className="light-card p-6 flex flex-col justify-between h-full min-h-[220px] rounded-2xl bg-white border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow">
       {/* Top Header */}
       <div className="flex items-center justify-between">
         <div className="w-10 h-10 rounded-full bg-blue-100/80 flex items-center justify-center text-[#3464f3]">

@@ -15,7 +15,7 @@ export const SellsEquivalentCard: React.FC<SellsEquivalentCardProps> = memo(({ u
     : [{ val: 10 }, { val: 25 }, { val: 15 }, { val: 35 }, { val: 20 }, { val: 30 }, { val: 25 }];
 
   return (
-    <div className="light-card p-6 flex flex-col justify-between h-full min-h-[220px]">
+    <div className="light-card p-6 flex flex-col justify-between h-full min-h-[220px] rounded-2xl bg-white border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow">
       {/* Top Header */}
       <div className="flex items-center justify-between">
         <div className="w-10 h-10 rounded-full bg-pink-100/80 flex items-center justify-center">
