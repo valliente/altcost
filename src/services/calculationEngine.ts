@@ -27,6 +27,7 @@ export interface AssetComparisonResult {
 
 export interface OpportunityCostTimeHorizons {
   year1: number;
+  year3: number;
   year5: number;
   year10: number;
   year20: number;
@@ -34,9 +35,9 @@ export interface OpportunityCostTimeHorizons {
 }
 
 export interface MonteCarloPercentiles {
-  p5th: number; // Pessimistic 5th percentile
+  p10th: number; // Pessimistic 10th percentile
   p50th: number; // Median 50th percentile
-  p95th: number; // Optimistic 95th percentile
+  p90th: number; // Optimistic 90th percentile
 }
 
 export interface OpportunityCostMetrics {
@@ -63,7 +64,7 @@ export interface CalculationSummary {
 
 /**
  * Monte Carlo Predictive Growth Simulation Engine
- * Simulates 1,000 future asset trajectories using Box-Muller random normal distribution
+ * Now asynchronous using a Web Worker
  */
 export function runMonteCarloSimulation(
   monthlySpend: number,
@@ -71,38 +72,50 @@ export function runMonteCarloSimulation(
   annualVolatility: number = 0.15,
   horizonYears: number = 20,
   simulations: number = 1000
-): MonteCarloPercentiles {
-  const monthlyCagr = annualCagr / 100 / 12;
-  const monthlyVol = annualVolatility / Math.sqrt(12);
-  const totalMonths = Math.round(horizonYears * 12);
-
-  const finalBalances: number[] = [];
-
-  for (let s = 0; s < simulations; s++) {
-    let balance = 0;
-    for (let m = 0; m < totalMonths; m++) {
-      // Box-Muller transformation for normal random return
-      const u1 = Math.random() || 0.0001;
-      const u2 = Math.random() || 0.0001;
-      const z = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
-
-      const monthReturn = monthlyCagr + z * monthlyVol;
-      balance = (balance + monthlySpend) * Math.max(0.7, 1 + monthReturn);
+): Promise<MonteCarloPercentiles> {
+  return new Promise((resolve, reject) => {
+    try {
+      const worker = new Worker(new URL('./monteCarloWorker.ts', import.meta.url), { type: 'module' });
+      worker.onmessage = (e) => {
+        resolve(e.data);
+        worker.terminate();
+      };
+      worker.onerror = (e) => {
+        reject(e);
+        worker.terminate();
+      };
+      worker.postMessage({
+        monthlySpend,
+        annualCagr,
+        annualVolatility,
+        horizonYears,
+        simulations
+      });
+    } catch (e) {
+      // Fallback for testing environments without Worker support
+      const monthlyCagr = annualCagr / 100 / 12;
+      const monthlyVol = annualVolatility / Math.sqrt(12);
+      const totalMonths = Math.round(horizonYears * 12);
+      const finalBalances: number[] = [];
+      for (let s = 0; s < simulations; s++) {
+        let balance = 0;
+        for (let m = 0; m < totalMonths; m++) {
+          const u1 = Math.random() || 0.0001;
+          const u2 = Math.random() || 0.0001;
+          const z = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
+          const monthReturn = monthlyCagr + z * monthlyVol;
+          balance = (balance + monthlySpend) * Math.max(0.7, 1 + monthReturn);
+        }
+        finalBalances.push(Math.round(balance));
+      }
+      finalBalances.sort((a, b) => a - b);
+      resolve({
+        p10th: finalBalances[Math.floor(simulations * 0.10)] || 0,
+        p50th: finalBalances[Math.floor(simulations * 0.50)] || 0,
+        p90th: finalBalances[Math.floor(simulations * 0.90)] || 0,
+      });
     }
-    finalBalances.push(Math.round(balance));
-  }
-
-  finalBalances.sort((a, b) => a - b);
-
-  const p5thIdx = Math.floor(simulations * 0.05);
-  const p50thIdx = Math.floor(simulations * 0.50);
-  const p95thIdx = Math.floor(simulations * 0.95);
-
-  return {
-    p5th: finalBalances[p5thIdx] || 0,
-    p50th: finalBalances[p50thIdx] || 0,
-    p95th: finalBalances[p95thIdx] || 0,
-  };
+  });
 }
 
 /**
@@ -121,6 +134,7 @@ export function calculateTimeHorizons(monthlySpend: number, annualCagr: number =
 
   return {
     year1: calcForYears(1),
+    year3: calcForYears(3),
     year5: calcForYears(5),
     year10: calcForYears(10),
     year20: calcForYears(20),
@@ -128,12 +142,12 @@ export function calculateTimeHorizons(monthlySpend: number, annualCagr: number =
   };
 }
 
-export function calculateAlternativeHistory(
+export async function calculateAlternativeHistory(
   expense: ExpenseState,
   customAssets: AssetConfig[] = [],
   reductionPercentage: number = 0,
   annualInflationRate: number = 2.5 // CPI Inflation adjustment (2.5%)
-): CalculationSummary {
+): Promise<CalculationSummary> {
   const startDate = new Date(expense.startDate || '2021-01-01');
   const endDate = new Date('2026-07-01');
   
@@ -238,7 +252,7 @@ export function calculateAlternativeHistory(
     : 0;
 
   const timeHorizons = calculateTimeHorizons(effectiveMonthlySpend, bestAsset.annualCagr);
-  const monteCarlo = runMonteCarloSimulation(effectiveMonthlySpend, bestAsset.annualCagr);
+  const monteCarlo = await runMonteCarloSimulation(effectiveMonthlySpend, bestAsset.annualCagr);
 
   return {
     expense,

@@ -1,6 +1,6 @@
 {
   "name": "altcost",
-  "version": "0.1.403",
+  "version": "0.1.404",
   "description": "Alternative History Asset Comparison Engine - Enterprise Performance & Testing Release",
   "private": true,
   "type": "module",
@@ -23,6 +23,9 @@
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.0.0",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/node": "^22.10.1",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
@@ -32,6 +35,7 @@
     "cross-env": "^7.0.3",
     "electron": "^33.2.1",
     "electron-builder": "^25.1.8",
+    "jsdom": "^30.0.0",
     "tailwindcss": "^4.0.0",
     "typescript": "^5.7.2",
     "vite": "^6.0.7",

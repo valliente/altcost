@@ -49,6 +49,8 @@ export const ExpenseHistoryLogView: React.FC<ExpenseHistoryLogViewProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [frequencyFilter, setFrequencyFilter] = useState<string>('all');
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const filteredLogs = historyLogs.filter((log) => {
     const matchesSearch = log.title.toLowerCase().includes(searchQuery.toLowerCase());
@@ -56,11 +58,15 @@ export const ExpenseHistoryLogView: React.FC<ExpenseHistoryLogViewProps> = ({
     return matchesSearch && matchesFreq;
   });
 
+  const totalPages = Math.max(1, Math.ceil(filteredLogs.length / itemsPerPage));
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedLogs = filteredLogs.slice(startIndex, startIndex + itemsPerPage);
+
   const toggleSelectAll = () => {
-    if (selectedIds.length === filteredLogs.length) {
+    if (selectedIds.length === paginatedLogs.length) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(filteredLogs.map(l => l.id));
+      setSelectedIds(paginatedLogs.map(l => l.id));
     }
   };
 
@@ -81,7 +87,20 @@ export const ExpenseHistoryLogView: React.FC<ExpenseHistoryLogViewProps> = ({
     reader.onload = (event) => {
       const content = event.target?.result as string;
       if (content) {
-        onImportJSON(content);
+        try {
+          const parsed = JSON.parse(content);
+          if (parsed && typeof parsed === 'object') {
+            const hasValidKeys = 'userProfile' in parsed || 'expense' in parsed || 'historyLogs' in parsed || 'customAssets' in parsed || 'customGoals' in parsed;
+            if (!hasValidKeys) {
+              throw new Error("Missing required schema keys");
+            }
+            onImportJSON(content);
+          } else {
+            throw new Error("Root element must be an object");
+          }
+        } catch (err: any) {
+          alert('Error: Imported JSON file does not match the AltCost schema. ' + err.message);
+        }
       }
     };
     reader.readAsText(file);
@@ -200,7 +219,7 @@ export const ExpenseHistoryLogView: React.FC<ExpenseHistoryLogViewProps> = ({
                 <tr className="bg-slate-50 border-b border-slate-200/80 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
                   <th className="py-3.5 px-4 w-10 text-center">
                     <button onClick={toggleSelectAll} className="text-slate-400 hover:text-slate-600">
-                      {selectedIds.length === filteredLogs.length ? <CheckSquare className="w-4 h-4 text-[#3464f3]" /> : <Square className="w-4 h-4" />}
+                      {paginatedLogs.length > 0 && selectedIds.length === paginatedLogs.length ? <CheckSquare className="w-4 h-4 text-[#3464f3]" /> : <Square className="w-4 h-4" />}
                     </button>
                   </th>
                   <th className="py-3.5 px-4">Habit Label</th>
@@ -212,7 +231,7 @@ export const ExpenseHistoryLogView: React.FC<ExpenseHistoryLogViewProps> = ({
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-xs font-medium">
-                {filteredLogs.map((log) => {
+                {paginatedLogs.map((log) => {
                   const isSelected = selectedIds.includes(log.id);
                   return (
                     <tr key={log.id} className={`hover:bg-slate-50/80 transition-colors ${log.isPaused ? 'opacity-60 bg-slate-50/50' : ''}`}>
@@ -269,6 +288,34 @@ export const ExpenseHistoryLogView: React.FC<ExpenseHistoryLogViewProps> = ({
                 })}
               </tbody>
             </table>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between p-4 border-t border-slate-200/80 bg-slate-50">
+                <span className="text-xs font-medium text-slate-500">
+                  Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredLogs.length)} of {filteredLogs.length} entries
+                </span>
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className="px-3 py-1 rounded-lg text-xs font-semibold bg-white border border-slate-200 disabled:opacity-50"
+                  >
+                    Previous
+                  </button>
+                  <span className="px-3 py-1 text-xs font-bold text-slate-700">
+                    {currentPage} / {totalPages}
+                  </span>
+                  <button
+                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                    className="px-3 py-1 rounded-lg text-xs font-semibold bg-white border border-slate-200 disabled:opacity-50"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

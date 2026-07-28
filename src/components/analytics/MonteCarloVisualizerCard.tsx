@@ -37,16 +37,16 @@ export const MonteCarloVisualizerCard: React.FC<MonteCarloVisualizerCardProps> =
 
       {/* Monte Carlo 3-Percentile Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {/* P5th (Pessimistic) */}
+        {/* P10th (Pessimistic) */}
         <div className="p-4 rounded-2xl bg-rose-50/60 border border-rose-200/80 space-y-1">
           <div className="flex items-center justify-between text-xs font-semibold text-rose-700">
-            <span>5th Percentile (Bear)</span>
+            <span>10th Percentile (Bear)</span>
             <span className="text-[10px] font-mono">Pessimistic</span>
           </div>
           <div className="text-2xl font-extrabold text-rose-900 font-mono">
-            {currencySymbol}{monteCarlo.p5th.toLocaleString()}
+            {currencySymbol}{monteCarlo.p10th.toLocaleString()}
           </div>
-          <p className="text-[10px] text-rose-600 font-medium">95% probability of exceeding</p>
+          <p className="text-[10px] text-rose-600 font-medium">90% probability of exceeding</p>
         </div>
 
         {/* P50th (Median) */}
@@ -61,16 +61,16 @@ export const MonteCarloVisualizerCard: React.FC<MonteCarloVisualizerCardProps> =
           <p className="text-[10px] text-blue-600 font-medium">Median expected outcome</p>
         </div>
 
-        {/* P95th (Optimistic) */}
+        {/* P90th (Optimistic) */}
         <div className="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-200/80 space-y-1">
           <div className="flex items-center justify-between text-xs font-semibold text-emerald-700">
-            <span>95th Percentile (Bull)</span>
+            <span>90th Percentile (Bull)</span>
             <span className="text-[10px] font-mono">Optimistic</span>
           </div>
           <div className="text-2xl font-extrabold text-emerald-900 font-mono">
-            {currencySymbol}{monteCarlo.p95th.toLocaleString()}
+            {currencySymbol}{monteCarlo.p90th.toLocaleString()}
           </div>
-          <p className="text-[10px] text-emerald-600 font-medium">Top 5% runaway growth</p>
+          <p className="text-[10px] text-emerald-600 font-medium">Top 10% runaway growth</p>
         </div>
       </div>
 
@@ -81,9 +81,10 @@ export const MonteCarloVisualizerCard: React.FC<MonteCarloVisualizerCardProps> =
           <span>Opportunity Cost Time Horizons Matrix ({bestPerformingAsset.annualCagr}% CAGR)</span>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-6 gap-2">
           {[
             { horizon: '1 Year', val: timeHorizons.year1 },
+            { horizon: '3 Years', val: timeHorizons.year3 },
             { horizon: '5 Years', val: timeHorizons.year5 },
             { horizon: '10 Years', val: timeHorizons.year10 },
             { horizon: '20 Years', val: timeHorizons.year20 },

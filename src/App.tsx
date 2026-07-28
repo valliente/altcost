@@ -3,7 +3,7 @@ import { Header } from './components/layout/Header';
 import { Sidebar } from './components/layout/Sidebar';
 import { ExpenseInputForm, ExpenseState } from './components/calculator/ExpenseInputForm';
 import { PresetTemplates } from './components/presets/PresetTemplates';
-import { calculateAlternativeHistory } from './services/calculationEngine';
+import { calculateAlternativeHistory, CalculationSummary } from './services/calculationEngine';
 import { AssetConfig } from './data/assetDataModel';
 import { KpiBlueCard } from './components/dashboard/KpiBlueCard';
 import { SellsEquivalentCard } from './components/dashboard/SellsEquivalentCard';
@@ -19,9 +19,9 @@ import { ExpenseHistoryLogView, ExpenseHistoryEntry } from './components/history
 import { CustomAssetCreatorModal } from './components/customAsset/CustomAssetCreatorModal';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { useTheme } from './hooks/useTheme';
-import { SlidersHorizontal, X, RotateCcw, AlertTriangle } from 'lucide-react';
+import { SlidersHorizontal, X, RotateCcw, AlertTriangle, Trash2 } from 'lucide-react';
 
-const VERSION_KEY_PREFIX = 'altcost_v0.1.403_';
+const VERSION_KEY_PREFIX = 'altcost_v0.1.404_';
 
 export default function App() {
   const { theme, toggleTheme } = useTheme();
@@ -219,10 +219,19 @@ export default function App() {
     setActiveTab('home');
   }, []);
 
-  // Sub-16ms Memoized Calculation Engine
-  const summary = useMemo(() => {
-    if (!expense || expense.amount <= 0) return null;
-    return calculateAlternativeHistory(expense, customAssets, reductionPercentage);
+  // Async Calculation Engine
+  const [summary, setSummary] = useState<CalculationSummary | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    if (!expense || expense.amount <= 0) {
+      setSummary(null);
+      return;
+    }
+    calculateAlternativeHistory(expense, customAssets, reductionPercentage).then(res => {
+      if (isMounted) setSummary(res);
+    });
+    return () => { isMounted = false; };
   }, [expense, customAssets, reductionPercentage]);
 
   const hasActiveData = summary !== null && summary.totalCashSpent > 0;
@@ -242,29 +251,48 @@ export default function App() {
         <OnboardingWizard onCompleteOnboarding={handleCompleteOnboarding} />
       )}
 
-      {/* Reset Confirmation Modal */}
+      {/* Database Inspector & Purge Modal */}
       {showResetConfirmModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="w-full max-w-sm bg-white dark:bg-slate-800 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-2xl space-y-4 text-center">
-            <div className="w-12 h-12 rounded-2xl bg-rose-100 dark:bg-rose-900/40 text-rose-600 flex items-center justify-center mx-auto">
-              <AlertTriangle className="w-6 h-6" />
-            </div>
-            <h4 className="font-bold text-slate-900 dark:text-white text-base font-display">Confirm Reset App Data?</h4>
-            <p className="text-xs text-slate-500">
-              This will permanently clear all tracked habits, custom assets, and settings for v0.1.403.
-            </p>
-            <div className="flex space-x-2 pt-2">
-              <button
-                onClick={() => setShowResetConfirmModal(false)}
-                className="flex-1 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold"
-              >
-                Cancel
+          <div className="w-full max-w-md bg-white dark:bg-slate-800 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-2xl space-y-5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-900/40 text-amber-600 flex items-center justify-center">
+                  <AlertTriangle className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-slate-900 dark:text-white text-base font-display">Database Inspector</h4>
+                  <p className="text-xs text-slate-500">v0.1.404 Isolated Storage</p>
+                </div>
+              </div>
+              <button onClick={() => setShowResetConfirmModal(false)} className="text-slate-400 hover:text-slate-600">
+                <X className="w-5 h-5" />
               </button>
+            </div>
+            
+            <div className="space-y-2 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-2xl border border-slate-200 dark:border-slate-700">
+              <h5 className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Storage Usage</h5>
+              {[
+                { name: 'User Profile', size: localStorage.getItem(`${VERSION_KEY_PREFIX}user_profile`)?.length || 0 },
+                { name: 'Expenses', size: localStorage.getItem(`${VERSION_KEY_PREFIX}expenses`)?.length || 0 },
+                { name: 'History Logs', size: localStorage.getItem(`${VERSION_KEY_PREFIX}history_logs`)?.length || 0 },
+                { name: 'Custom Assets', size: localStorage.getItem(`${VERSION_KEY_PREFIX}custom_assets`)?.length || 0 },
+                { name: 'Goals', size: localStorage.getItem(`${VERSION_KEY_PREFIX}goals`)?.length || 0 }
+              ].map(item => (
+                <div key={item.name} className="flex justify-between items-center text-xs">
+                  <span className="text-slate-600 dark:text-slate-400 font-medium">{item.name}</span>
+                  <span className="font-mono text-slate-900 dark:text-slate-200">{item.size > 0 ? (item.size / 1024).toFixed(2) + ' KB' : 'Empty'}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="pt-2 flex flex-col space-y-2">
               <button
                 onClick={handleResetAppData}
-                className="flex-1 py-2.5 rounded-xl bg-rose-600 text-white text-xs font-bold hover:bg-rose-700 shadow-md shadow-rose-500/20"
+                className="w-full py-3 rounded-xl bg-rose-600 text-white text-xs font-bold hover:bg-rose-700 shadow-md shadow-rose-500/20 transition-all flex items-center justify-center space-x-2"
               >
-                Reset Everything
+                <Trash2 className="w-4 h-4" />
+                <span>Purge Entire Database & Restart</span>
               </button>
             </div>
           </div>
