@@ -4,7 +4,7 @@
   "description": "Alternative History Asset Comparison Engine - UI Overhaul & Bug Fixes Release",
   "private": true,
   "type": "module",
-  "main": "electron/main.cjs",
+  "main": "electron/main.js",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
