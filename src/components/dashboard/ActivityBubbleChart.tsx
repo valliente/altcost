@@ -1,36 +1,54 @@
 import React, { memo } from 'react';
 import { MoreHorizontal } from 'lucide-react';
 
-export const ActivityBubbleChart: React.FC = memo(() => {
+interface ActivityBubbleChartProps {
+  hasData?: boolean;
+  activityText?: string;
+}
+
+export const ActivityBubbleChart: React.FC<ActivityBubbleChartProps> = memo(({
+  hasData = false,
+  activityText = 'Recent Activities: None'
+}) => {
   return (
-    <div className="light-card p-6 flex flex-col justify-between h-full min-h-[220px]">
+    <div className="light-card p-6 flex flex-col justify-between h-full min-h-[300px]">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h4 className="font-bold text-slate-800 text-sm font-display">Activity</h4>
+      <div className="flex items-center justify-between mb-2">
+        <h4 className="font-bold text-slate-800 text-sm md:text-base font-display">Activities</h4>
         <button className="text-slate-400 hover:text-slate-600">
           <MoreHorizontal className="w-4 h-4" />
         </button>
       </div>
 
-      {/* Bubble Chart Visualization matching image_1.png */}
-      <div className="relative w-full h-44 flex items-center justify-center">
-        {/* Large Blue Circle */}
-        <div className="absolute left-4 top-2 w-28 h-28 rounded-full bg-[#3464f3] text-white flex flex-col items-center justify-center shadow-lg shadow-blue-500/20 transform transition-transform hover:scale-105 z-10">
-          <span className="font-bold text-sm font-mono">$2,509</span>
-          <span className="text-[10px] text-white/80">Online Shop</span>
+      {/* Bubble Visualization matching image_2.png */}
+      <div className="relative w-full h-44 flex items-center justify-center my-auto">
+        {/* Circle 1 */}
+        <div className={`absolute left-4 top-2 w-24 h-24 rounded-full flex flex-col items-center justify-center transition-all ${
+          hasData ? 'bg-[#3464f3] text-white shadow-lg shadow-blue-500/20' : 'bg-slate-200/90 text-slate-400'
+        }`}>
+          <span className="font-bold text-xs font-mono">{hasData ? '$2,509' : ''}</span>
         </div>
 
-        {/* Medium Pink Circle */}
-        <div className="absolute right-6 top-3 w-20 h-20 rounded-full bg-pink-500 text-white flex flex-col items-center justify-center shadow-lg shadow-pink-500/20 transform transition-transform hover:scale-105 z-20">
-          <span className="font-bold text-xs font-mono">$3,50</span>
-          <span className="text-[9px] text-white/80">Tax</span>
+        {/* Circle 2 */}
+        <div className={`absolute right-6 top-3 w-18 h-18 rounded-full flex flex-col items-center justify-center transition-all ${
+          hasData ? 'bg-pink-500 text-white shadow-lg shadow-pink-500/20' : 'bg-slate-200/70 text-slate-400'
+        }`}>
+          <span className="font-bold text-xs font-mono">{hasData ? '$3,50' : ''}</span>
         </div>
 
-        {/* Gold Circle */}
-        <div className="absolute right-12 bottom-2 w-20 h-20 rounded-full bg-amber-400 text-white flex flex-col items-center justify-center shadow-lg shadow-amber-500/20 transform transition-transform hover:scale-105 z-30">
-          <span className="font-bold text-xs font-mono">$2,50</span>
-          <span className="text-[9px] text-white/80">Food</span>
+        {/* Circle 3 */}
+        <div className={`absolute right-10 bottom-2 w-14 h-14 rounded-full flex flex-col items-center justify-center transition-all ${
+          hasData ? 'bg-amber-400 text-white shadow-lg shadow-amber-500/20' : 'bg-slate-200/50 text-slate-400'
+        }`}>
+          <span className="font-bold text-[10px] font-mono">{hasData ? '$2,50' : ''}</span>
         </div>
+      </div>
+
+      {/* Bottom Subtext matching image_2.png */}
+      <div className="pt-3 border-t border-slate-100 text-center">
+        <span className="text-xs font-semibold text-slate-400">
+          {activityText}
+        </span>
       </div>
     </div>
   );
