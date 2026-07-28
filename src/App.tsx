@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Header } from './components/layout/Header';
 import { Sidebar } from './components/layout/Sidebar';
 import { ExpenseInputForm, ExpenseState } from './components/calculator/ExpenseInputForm';
 import { PresetTemplates } from './components/presets/PresetTemplates';
 import { calculateAlternativeHistory } from './services/calculationEngine';
+import { AssetConfig } from './data/assetDataModel';
 import { KpiBlueCard } from './components/dashboard/KpiBlueCard';
 import { SellsEquivalentCard } from './components/dashboard/SellsEquivalentCard';
 import { RevenuePotentialCard } from './components/dashboard/RevenuePotentialCard';
@@ -11,12 +12,16 @@ import { ActivityBubbleChart } from './components/dashboard/ActivityBubbleChart'
 import { HistoricalAltCostComparisonChart } from './components/dashboard/HistoricalAltCostComparisonChart';
 import { PaymentsDiversificationRing } from './components/dashboard/PaymentsDiversificationRing';
 import { GoalsCard, GoalItemData } from './components/dashboard/GoalsCard';
+import { ScenarioModelerCard } from './components/dashboard/ScenarioModelerCard';
 import { OnboardingWizard, UserProfile } from './components/onboarding/OnboardingWizard';
 import { BenchmarkAnalyticsView } from './components/analytics/BenchmarkAnalyticsView';
 import { ExpenseHistoryLogView, ExpenseHistoryEntry } from './components/history/ExpenseHistoryLogView';
-import { SlidersHorizontal, X, RotateCcw } from 'lucide-react';
+import { CustomAssetCreatorModal } from './components/customAsset/CustomAssetCreatorModal';
+import { useTheme } from './hooks/useTheme';
+import { SlidersHorizontal, X, RotateCcw, PlusCircle, Sparkles } from 'lucide-react';
 
 export default function App() {
+  const { theme, toggleTheme } = useTheme();
   const [activeTab, setActiveTab] = useState('home');
 
   // User Profile
@@ -39,6 +44,16 @@ export default function App() {
     }
   });
 
+  // Custom User-Defined Assets
+  const [customAssets, setCustomAssets] = useState<AssetConfig[]>(() => {
+    try {
+      const saved = localStorage.getItem('altcost_custom_assets');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      return [];
+    }
+  });
+
   // History Transaction Logs
   const [historyLogs, setHistoryLogs] = useState<ExpenseHistoryEntry[]>(() => {
     try {
@@ -49,7 +64,7 @@ export default function App() {
     }
   });
 
-  // Custom User Goals
+  // Custom Goals
   const [customGoals, setCustomGoals] = useState<GoalItemData[]>(() => {
     try {
       const saved = localStorage.getItem('altcost_goals');
@@ -59,10 +74,15 @@ export default function App() {
     }
   });
 
+  // Habit Reduction Slider (Scenario Modeler 0% - 100%)
+  const [reductionPercentage, setReductionPercentage] = useState<number>(0);
+
+  // Modals
   const [showConfigModal, setShowConfigModal] = useState(false);
   const [showGoalModal, setShowGoalModal] = useState(false);
+  const [showCustomAssetModal, setShowCustomAssetModal] = useState(false);
 
-  // Sync to localStorage
+  // Sync state to localStorage
   useEffect(() => {
     if (userProfile) localStorage.setItem('altcost_user_profile', JSON.stringify(userProfile));
   }, [userProfile]);
@@ -72,6 +92,10 @@ export default function App() {
   }, [expense]);
 
   useEffect(() => {
+    localStorage.setItem('altcost_custom_assets', JSON.stringify(customAssets));
+  }, [customAssets]);
+
+  useEffect(() => {
     localStorage.setItem('altcost_history_logs', JSON.stringify(historyLogs));
   }, [historyLogs]);
 
@@ -79,8 +103,8 @@ export default function App() {
     localStorage.setItem('altcost_goals', JSON.stringify(customGoals));
   }, [customGoals]);
 
-  // Handle Onboarding Completion
-  const handleCompleteOnboarding = (profile: UserProfile, initialExpense: ExpenseState | null) => {
+  // Onboarding Complete Handler
+  const handleCompleteOnboarding = useCallback((profile: UserProfile, initialExpense: ExpenseState | null) => {
     setUserProfile(profile);
     if (initialExpense) {
       setExpense(initialExpense);
@@ -91,10 +115,10 @@ export default function App() {
       };
       setHistoryLogs([newEntry]);
     }
-  };
+  }, []);
 
-  // Save or update an expense
-  const handleSaveExpense = (updated: ExpenseState) => {
+  // Save / Update active expense
+  const handleSaveExpense = useCallback((updated: ExpenseState) => {
     setExpense(updated);
     const newEntry: ExpenseHistoryEntry = {
       ...updated,
@@ -103,15 +127,27 @@ export default function App() {
     };
     setHistoryLogs(prev => [newEntry, ...prev]);
     setShowConfigModal(false);
-  };
+  }, []);
 
-  // Delete history log
-  const handleDeleteHistoryEntry = (id: string) => {
-    setHistoryLogs(prev => prev.filter(log => log.id !== id));
-  };
+  // Save custom asset
+  const handleSaveCustomAsset = useCallback((asset: AssetConfig) => {
+    setCustomAssets(prev => [...prev, asset]);
+  }, []);
 
-  // Edit history log entry
-  const handleEditHistoryEntry = (entry: ExpenseHistoryEntry) => {
+  // History Log Action Handlers
+  const handleDeleteHistoryEntry = useCallback((id: string) => {
+    setHistoryLogs(prev => prev.filter(l => l.id !== id));
+  }, []);
+
+  const handleBulkDeleteEntries = useCallback((ids: string[]) => {
+    setHistoryLogs(prev => prev.filter(l => !ids.includes(l.id)));
+  }, []);
+
+  const handleTogglePauseEntry = useCallback((id: string) => {
+    setHistoryLogs(prev => prev.map(l => l.id === id ? { ...l, isPaused: !l.isPaused } : l));
+  }, []);
+
+  const handleEditHistoryEntry = useCallback((entry: ExpenseHistoryEntry) => {
     setExpense({
       title: entry.title,
       amount: entry.amount,
@@ -120,25 +156,65 @@ export default function App() {
     });
     setActiveTab('home');
     setShowConfigModal(true);
-  };
+  }, []);
+
+  // CSV & JSON Data Export / Import
+  const handleExportData = useCallback((format: 'csv' | 'json') => {
+    if (format === 'json') {
+      const dataStr = JSON.stringify({ userProfile, expense, historyLogs, customAssets, customGoals }, null, 2);
+      const blob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `altcost_backup_${new Date().toISOString().slice(0, 10)}.json`;
+      link.click();
+    } else {
+      // Export CSV
+      let csv = 'Title,Amount,Frequency,StartDate,CreatedAt,Status\n';
+      historyLogs.forEach(l => {
+        csv += `"${l.title}",${l.amount},${l.frequency},${l.startDate},"${l.createdAt}",${l.isPaused ? 'Paused' : 'Active'}\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `altcost_habits_${new Date().toISOString().slice(0, 10)}.csv`;
+      link.click();
+    }
+  }, [userProfile, expense, historyLogs, customAssets, customGoals]);
+
+  const handleImportJSON = useCallback((jsonStr: string) => {
+    try {
+      const parsed = JSON.parse(jsonStr);
+      if (parsed.userProfile) setUserProfile(parsed.userProfile);
+      if (parsed.expense) setExpense(parsed.expense);
+      if (Array.isArray(parsed.historyLogs)) setHistoryLogs(parsed.historyLogs);
+      if (Array.isArray(parsed.customAssets)) setCustomAssets(parsed.customAssets);
+      if (Array.isArray(parsed.customGoals)) setCustomGoals(parsed.customGoals);
+    } catch (e) {
+      alert('Invalid AltCost JSON backup file format.');
+    }
+  }, []);
 
   // Reset App Data
-  const handleResetAppData = () => {
+  const handleResetAppData = useCallback(() => {
     localStorage.clear();
     setUserProfile(null);
     setExpense(null);
     setHistoryLogs([]);
+    setCustomAssets([]);
     setCustomGoals([]);
     setShowConfigModal(false);
     setShowGoalModal(false);
+    setShowCustomAssetModal(false);
     setActiveTab('home');
-  };
+  }, []);
 
-  // Compute live calculation summary when expense is active
+  // Perform sub-16ms memoized compounding calculation
   const summary = useMemo(() => {
     if (!expense || expense.amount <= 0) return null;
-    return calculateAlternativeHistory(expense);
-  }, [expense]);
+    return calculateAlternativeHistory(expense, customAssets, reductionPercentage);
+  }, [expense, customAssets, reductionPercentage]);
 
   const hasActiveData = summary !== null && summary.totalCashSpent > 0;
   const currencySym = userProfile?.currency || '$';
@@ -151,25 +227,28 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f3f4f8] text-slate-900 flex overflow-x-hidden font-sans">
-      {/* Onboarding Wizard Modal if user profile is missing */}
+    <div className="min-h-screen bg-[#f3f4f8] dark:bg-[#090d16] text-slate-900 dark:text-slate-100 flex overflow-x-hidden font-sans transition-colors duration-200">
+      {/* Onboarding Wizard Modal */}
       {!userProfile && (
         <OnboardingWizard onCompleteOnboarding={handleCompleteOnboarding} />
       )}
 
-      {/* Left Vertical Icon Sidebar matching image_2.png */}
+      {/* Left Vertical Icon Sidebar */}
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
         <div className="flex-1 p-6 md:p-8 max-w-[1600px] w-full mx-auto space-y-5">
-          {/* Top Header matching image_2.png */}
+          {/* Header */}
           <Header
             userName={userProfile?.name || 'User'}
             currencySymbol={currencySym}
+            theme={theme}
+            onToggleTheme={toggleTheme}
             onUpdateUserName={(name) => setUserProfile(prev => prev ? { ...prev, name } : { name, currency: '$', onboarded: true })}
             onOpenExpenseModal={() => setShowConfigModal(true)}
             onOpenGoalModal={() => setShowGoalModal(true)}
+            onOpenCustomAssetModal={() => setShowCustomAssetModal(true)}
             onResetAppData={handleResetAppData}
             hasActiveExpense={hasActiveData}
           />
@@ -177,7 +256,7 @@ export default function App() {
           {/* TAB 1: DASHBOARD (HOME) */}
           {activeTab === 'home' && (
             <div className="space-y-5">
-              {/* Interactive Habit Templates (User-Input Driven) */}
+              {/* Habit Templates */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="flex-1">
                   <PresetTemplates
@@ -189,7 +268,7 @@ export default function App() {
                 <div className="flex items-center space-x-2 shrink-0">
                   <button
                     onClick={() => setShowConfigModal(!showConfigModal)}
-                    className="px-4 py-3 rounded-2xl bg-white border border-slate-200/80 text-xs font-bold text-slate-700 flex items-center justify-center space-x-2 shadow-sm hover:bg-slate-50 transition-colors"
+                    className="px-4 py-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 flex items-center justify-center space-x-2 shadow-sm hover:bg-slate-50 transition-colors"
                   >
                     <SlidersHorizontal className="w-4 h-4 text-[#3464f3]" />
                     <span>{hasActiveData ? 'Modify Expense' : 'Configure Engine'}</span>
@@ -198,20 +277,30 @@ export default function App() {
                   <button
                     onClick={handleResetAppData}
                     title="Reset App Data & Restart Setup"
-                    className="p-3 rounded-2xl bg-white border border-slate-200/80 text-slate-400 hover:text-rose-600 hover:bg-rose-50 shadow-sm transition-colors"
+                    className="p-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-slate-400 hover:text-rose-600 shadow-sm transition-colors"
                   >
                     <RotateCcw className="w-4 h-4" />
                   </button>
                 </div>
               </div>
 
-              {/* Modal / Inline Panel for Custom Expense */}
+              {/* Scenario Modeler Slider Card */}
+              {hasActiveData && (
+                <ScenarioModelerCard
+                  summary={summary}
+                  reductionPercentage={reductionPercentage}
+                  onReductionChange={setReductionPercentage}
+                  currencySymbol={currencySym}
+                />
+              )}
+
+              {/* Custom Expense Modal */}
               {showConfigModal && (
                 <div className="relative animate-in fade-in slide-in-from-top-4 duration-300">
                   <div className="absolute right-4 top-4 z-10">
                     <button
                       onClick={() => setShowConfigModal(false)}
-                      className="p-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500"
+                      className="p-1.5 rounded-full bg-slate-100 text-slate-500"
                     >
                       <X className="w-4 h-4" />
                     </button>
@@ -223,11 +312,19 @@ export default function App() {
                 </div>
               )}
 
+              {/* Custom Asset Creator Modal */}
+              {showCustomAssetModal && (
+                <CustomAssetCreatorModal
+                  onSaveCustomAsset={handleSaveCustomAsset}
+                  onClose={() => setShowCustomAssetModal(false)}
+                />
+              )}
+
               {/* Goal Modal */}
               {showGoalModal && (
-                <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xl space-y-3 animate-in fade-in duration-200">
+                <div className="p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xl space-y-3 animate-in fade-in duration-200">
                   <div className="flex items-center justify-between">
-                    <h4 className="font-bold text-slate-900 text-sm">Define Target Asset Goal</h4>
+                    <h4 className="font-bold text-slate-900 dark:text-white text-sm">Define Target Asset Goal</h4>
                     <button onClick={() => setShowGoalModal(false)} className="text-slate-400">
                       <X className="w-4 h-4" />
                     </button>
@@ -246,7 +343,7 @@ export default function App() {
                 </div>
               )}
 
-              {/* 📊 ROW 1: 4 Cards Grid (matching image_2.png layout) */}
+              {/* 📊 ROW 1: 4 Cards Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                 <KpiBlueCard
                   totalSpend={summary ? summary.totalCashSpent : 0}
@@ -273,7 +370,7 @@ export default function App() {
                 />
               </div>
 
-              {/* 📊 ROW 2: 3 Bottom Cards (matching image_2.png layout) */}
+              {/* 📊 ROW 2: 3 Bottom Cards */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
                 <div className="lg:col-span-6">
                   <HistoricalAltCostComparisonChart
@@ -299,7 +396,7 @@ export default function App() {
             </div>
           )}
 
-          {/* TAB 2: BENCHMARK ANALYTICS ('stack' / 'analytics') */}
+          {/* TAB 2: BENCHMARK ANALYTICS */}
           {(activeTab === 'stack' || activeTab === 'analytics') && (
             <BenchmarkAnalyticsView
               summary={summary}
@@ -307,13 +404,17 @@ export default function App() {
             />
           )}
 
-          {/* TAB 3: EXPENSE HISTORY LOG ('calendar' / 'history' / 'wallet') */}
+          {/* TAB 3: EXPENSE HISTORY & DATA MANAGEMENT */}
           {(activeTab === 'calendar' || activeTab === 'history' || activeTab === 'wallet') && (
             <ExpenseHistoryLogView
               historyLogs={historyLogs}
               onDeleteEntry={handleDeleteHistoryEntry}
+              onBulkDeleteEntries={handleBulkDeleteEntries}
+              onTogglePauseEntry={handleTogglePauseEntry}
               onEditEntry={handleEditHistoryEntry}
               onAddNewExpense={() => setShowConfigModal(true)}
+              onExportData={handleExportData}
+              onImportJSON={handleImportJSON}
               currencySymbol={currencySym}
             />
           )}
