@@ -101,14 +101,20 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Right Header Controls (Search, Bell, Profile) */}
       <div className="flex items-center space-x-3 self-end md:self-auto">
-        {/* Search Icon */}
-        <div className="w-10 h-10 rounded-full bg-white border border-slate-200/80 flex items-center justify-center text-slate-400 hover:text-slate-600 shadow-sm cursor-pointer transition-all">
-          <Search className="w-4.5 h-4.5" />
+        {/* Search Input */}
+        <div className="relative hidden md:flex items-center">
+          <Search className="w-4 h-4 text-slate-400 absolute left-3" />
+          <input
+            type="text"
+            placeholder="Search assets, history..."
+            className="w-56 pl-9 pr-4 py-2 rounded-full bg-white border border-slate-200 text-xs font-medium text-slate-700 outline-none focus:border-[#3464f3] focus:ring-1 focus:ring-[#3464f3] transition-all shadow-sm placeholder:text-slate-400"
+          />
         </div>
 
         {/* Notification Bell */}
-        <div className="w-10 h-10 rounded-full bg-white border border-slate-200/80 flex items-center justify-center text-slate-400 hover:text-slate-600 shadow-sm cursor-pointer transition-all">
+        <div className="relative w-10 h-10 rounded-full bg-white border border-slate-200/80 flex items-center justify-center text-slate-400 hover:text-slate-600 shadow-sm cursor-pointer transition-all">
           <Bell className="w-4.5 h-4.5" />
+          <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-rose-500 rounded-full border-2 border-white"></span>
         </div>
 
         {/* Neutral Avatar Icon Dropdown */}
