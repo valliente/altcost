@@ -1,7 +1,7 @@
 {
   "name": "altcost",
-  "version": "0.1.2",
-  "description": "Alternative History Asset Comparison Engine - Dynamic Onboarding Update",
+  "version": "0.1.3",
+  "description": "Alternative History Asset Comparison Engine - Analytics & History Repair Update",
   "private": true,
   "type": "module",
   "main": "electron/main.cjs",
@@ -39,7 +39,7 @@
   "build": {
     "appId": "com.altcost.app",
     "productName": "AltCost",
-    "artifactName": "AltCost-Setup-0.1.2.${ext}",
+    "artifactName": "AltCost-Setup-0.1.3.${ext}",
     "directories": {
       "output": "dist_electron"
     },
