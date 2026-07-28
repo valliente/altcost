@@ -86,6 +86,35 @@ export default function App() {
   const [showGoalModal, setShowGoalModal] = useState(false);
   const [showCustomAssetModal, setShowCustomAssetModal] = useState(false);
   const [showResetConfirmModal, setShowResetConfirmModal] = useState(false);
+  const [editingHistoryId, setEditingHistoryId] = useState<string | null>(null);
+
+  // Derive aggregated expense from all active history logs to sync Dashboard with History tab
+  const aggregatedExpense = useMemo(() => {
+    const activeLogs = historyLogs.filter(l => !l.isPaused);
+    if (activeLogs.length === 0) return null;
+    if (activeLogs.length === 1) return activeLogs[0];
+    
+    let totalMonthlySpend = 0;
+    let earliestDate = new Date().getTime();
+
+    activeLogs.forEach(log => {
+      let monthly = log.amount;
+      if (log.frequency === 'daily') monthly = log.amount * 30.4375;
+      if (log.frequency === 'weekly') monthly = (log.amount * 52) / 12;
+      if (log.frequency === 'yearly') monthly = log.amount / 12;
+      totalMonthlySpend += monthly;
+
+      const d = new Date(log.startDate).getTime();
+      if (d < earliestDate) earliestDate = d;
+    });
+
+    return {
+      title: 'Aggregated Habits',
+      amount: totalMonthlySpend,
+      frequency: 'monthly',
+      startDate: new Date(earliestDate).toISOString().split('T')[0]
+    } as ExpenseState;
+  }, [historyLogs]);
 
   // Automated Rolling Backup System
   const editCountRef = React.useRef(0);
@@ -150,14 +179,19 @@ export default function App() {
   // Save / Update active expense
   const handleSaveExpense = useCallback((updated: ExpenseState) => {
     setExpense(updated);
-    const newEntry: ExpenseHistoryEntry = {
-      ...updated,
-      id: Date.now().toString(),
-      createdAt: new Date().toISOString(),
-    };
-    setHistoryLogs(prev => [newEntry, ...prev]);
+    if (editingHistoryId) {
+      setHistoryLogs(prev => prev.map(l => l.id === editingHistoryId ? { ...l, ...updated } : l));
+      setEditingHistoryId(null);
+    } else {
+      const newEntry: ExpenseHistoryEntry = {
+        ...updated,
+        id: Date.now().toString(),
+        createdAt: new Date().toISOString(),
+      };
+      setHistoryLogs(prev => [newEntry, ...prev]);
+    }
     setShowConfigModal(false);
-  }, []);
+  }, [editingHistoryId]);
 
   // Save custom asset
   const handleSaveCustomAsset = useCallback((asset: AssetConfig) => {
@@ -184,6 +218,7 @@ export default function App() {
       frequency: entry.frequency,
       startDate: entry.startDate,
     });
+    setEditingHistoryId(entry.id);
     setActiveTab('home');
     setShowConfigModal(true);
   }, []);
@@ -250,15 +285,16 @@ export default function App() {
 
   useEffect(() => {
     let isMounted = true;
-    if (!expense || expense.amount <= 0) {
+    const activeExpense = aggregatedExpense || expense;
+    if (!activeExpense || activeExpense.amount <= 0) {
       setSummary(null);
       return;
     }
-    calculateAlternativeHistory(expense, customAssets, reductionPercentage).then(res => {
+    calculateAlternativeHistory(activeExpense, customAssets, reductionPercentage).then(res => {
       if (isMounted) setSummary(res);
     });
     return () => { isMounted = false; };
-  }, [expense, customAssets, reductionPercentage]);
+  }, [aggregatedExpense, expense, customAssets, reductionPercentage]);
 
   const hasActiveData = summary !== null && summary.totalCashSpent > 0;
   const currencySym = userProfile?.currency || '$';
@@ -338,7 +374,7 @@ export default function App() {
             theme={theme}
             onToggleTheme={toggleTheme}
             onUpdateUserName={(name) => setUserProfile(prev => prev ? { ...prev, name } : { name, currency: '$', onboarded: true })}
-            onOpenExpenseModal={() => setShowConfigModal(true)}
+            onOpenExpenseModal={() => { setShowConfigModal(true); setEditingHistoryId(null); }}
             onOpenGoalModal={() => setShowGoalModal(true)}
             onOpenCustomAssetModal={() => setShowCustomAssetModal(true)}
             onResetAppData={() => setShowResetConfirmModal(true)}
@@ -359,7 +395,7 @@ export default function App() {
 
                 <div className="flex items-center space-x-2 shrink-0">
                   <button
-                    onClick={() => setShowConfigModal(!showConfigModal)}
+                    onClick={() => { setShowConfigModal(!showConfigModal); setEditingHistoryId(null); }}
                     className="px-4 py-3 rounded-2xl bg-white border border-slate-200/80 text-xs font-bold text-slate-700 flex items-center justify-center space-x-2 shadow-sm hover:bg-slate-50 transition-colors"
                   >
                     <SlidersHorizontal className="w-4 h-4 text-[#3464f3]" />
@@ -393,7 +429,7 @@ export default function App() {
                 <div className="relative animate-in fade-in slide-in-from-top-4 duration-300">
                   <div className="absolute right-4 top-4 z-10">
                     <button
-                      onClick={() => setShowConfigModal(false)}
+                      onClick={() => { setShowConfigModal(false); setEditingHistoryId(null); }}
                       className="p-1.5 rounded-full bg-slate-100 text-slate-500"
                     >
                       <X className="w-4 h-4" />
@@ -521,7 +557,7 @@ export default function App() {
                 onBulkDeleteEntries={handleBulkDeleteEntries}
                 onTogglePauseEntry={handleTogglePauseEntry}
                 onEditEntry={handleEditHistoryEntry}
-                onAddNewExpense={() => setShowConfigModal(true)}
+                onAddNewExpense={() => { setShowConfigModal(true); setEditingHistoryId(null); }}
                 onExportData={handleExportData}
                 onImportJSON={handleImportJSON}
                 currencySymbol={currencySym}
