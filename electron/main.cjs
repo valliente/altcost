@@ -1,4 +1,4 @@
-const { app, BrowserWindow, shell } = require('electron');
+const { app, BrowserWindow, shell, Menu } = require('electron');
 const path = require('path');
 
 function createWindow() {
@@ -10,16 +10,24 @@ function createWindow() {
     title: 'AltCost - Alternative History Asset Comparison Engine',
     backgroundColor: '#090d16',
     autoHideMenuBar: true,
+    show: false, // Don't show until ready-to-show to prevent flicker
     webPreferences: {
       preload: path.join(__dirname, 'preload.cjs'),
       nodeIntegration: false,
       contextIsolation: true,
+      webSecurity: true,
     },
   });
 
-  // Open external links in user default browser
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show();
+  });
+
+  // Open external links in default OS browser
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    shell.openExternal(url);
+    if (url.startsWith('http:') || url.startsWith('https:')) {
+      shell.openExternal(url);
+    }
     return { action: 'deny' };
   });
 
@@ -27,15 +35,17 @@ function createWindow() {
 
   if (isDev && process.env.VITE_DEV_SERVER_URL) {
     mainWindow.loadURL(process.env.VITE_DEV_SERVER_URL);
-    // mainWindow.webContents.openDevTools();
   } else {
-    // Production bundle loading
+    // Relative path resolution for Electron production ASAR/dist bundle
     const indexPath = path.join(__dirname, '../dist/index.html');
-    mainWindow.loadFile(indexPath);
+    mainWindow.loadFile(indexPath).catch((err) => {
+      console.error('Failed to load production index.html:', err);
+    });
   }
 }
 
 app.whenReady().then(() => {
+  Menu.setApplicationMenu(null); // Clean borderless application feel
   createWindow();
 
   app.on('activate', function () {
