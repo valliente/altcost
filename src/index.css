@@ -1,75 +1,65 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #090d16;
-  --color-surface-50: #161e2e;
-  --color-surface-100: #1e293b;
-  --color-surface-200: #2d3748;
-  --color-surface-300: #374151;
-
+  --color-brand-blue: #3464f3;
+  --color-brand-blue-hover: #2651d4;
+  --color-brand-pink: #ff5c8d;
+  --color-brand-yellow: #fbbd08;
   --color-brand-emerald: #10b981;
-  --color-brand-gold: #f59e0b;
   --color-brand-purple: #8b5cf6;
-  --color-brand-cyan: #06b6d4;
-  --color-brand-rose: #f43f5e;
-  --color-brand-amber: #d97706;
+  --color-slate-bg: #f3f4f8;
 
   --font-sans: 'Inter', system-ui, sans-serif;
-  --font-display: 'Outfit', system-ui, sans-serif;
+  --font-display: 'Inter', system-ui, sans-serif;
 }
 
 body {
-  background-color: #090d16;
-  color: #f8fafc;
+  background-color: #f3f4f8;
+  color: #1e293b;
   font-family: 'Inter', system-ui, sans-serif;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
-.glass-card {
-  background: rgba(22, 30, 46, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+.light-card {
+  background: #ffffff;
+  border-radius: 1.25rem; /* 20px */
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  box-shadow: 0 8px 24px -6px rgba(149, 157, 165, 0.12), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.glass-card-hover {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.glass-card-hover:hover {
-  background: rgba(30, 41, 59, 0.85);
-  border-color: rgba(255, 255, 255, 0.18);
+.light-card-hover:hover {
+  box-shadow: 0 14px 32px -4px rgba(149, 157, 165, 0.2);
   transform: translateY(-2px);
-  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5);
 }
 
-.glass-input {
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: all 0.2s ease;
+.primary-blue-card {
+  background: linear-gradient(135deg, #3464f3 0%, #2553db 100%);
+  color: #ffffff;
+  border-radius: 1.25rem;
+  box-shadow: 0 12px 28px -6px rgba(52, 100, 243, 0.35);
 }
 
-.glass-input:focus {
-  border-color: rgba(16, 185, 129, 0.5);
-  box-shadow: 0 0 15px -3px rgba(16, 185, 129, 0.3);
-  outline: none;
+.custom-shadow {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
-/* Custom Scrollbars */
+/* Custom Scrollbar for Light Theme */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #090d16;
+  background: #f1f5f9;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
+  background: #cbd5e1;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #94a3b8;
 }

@@ -1,42 +1,60 @@
-import React from 'react';
-import { TrendingUp, Sparkles, Monitor, Github, Cpu } from 'lucide-react';
+import React, { useState } from 'react';
+import { Search, Bell, ChevronDown, Sparkles } from 'lucide-react';
 
-export const Header: React.FC = () => {
+interface HeaderProps {
+  userName?: string;
+  onOpenCalculator?: () => void;
+}
+
+export const Header: React.FC<HeaderProps> = ({ 
+  userName = 'Shahin Alam',
+  onOpenCalculator 
+}) => {
+  const [searchQuery, setSearchQuery] = useState('');
+
   return (
-    <header className="sticky top-0 z-50 glass-card border-b border-slate-800/80 px-6 py-4 flex items-center justify-between">
-      <div className="flex items-center space-x-3">
-        <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-cyan-500 shadow-lg shadow-emerald-500/20">
-          <TrendingUp className="w-6 h-6 text-slate-950 font-bold" />
-          <div className="absolute -top-1 -right-1 w-3 h-3 bg-amber-400 rounded-full animate-ping opacity-75" />
-        </div>
-        <div>
-          <div className="flex items-center space-x-2">
-            <h1 className="text-xl font-bold font-display tracking-tight bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">
-              AltCost
-            </h1>
-            <span className="text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-              v1.0.0
-            </span>
-          </div>
-          <p className="text-xs text-slate-400">Alternative History Asset Comparison Engine</p>
-        </div>
+    <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 pt-2">
+      {/* Greeting & Subtitle */}
+      <div>
+        <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 font-display tracking-tight flex items-center space-x-2">
+          <span>Hi, {userName}</span>
+          <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-100 text-[#3464f3] font-mono">
+            AltCost v0.1.2
+          </span>
+        </h1>
+        <p className="text-slate-500 text-xs md:text-sm mt-1 max-w-2xl font-normal leading-relaxed">
+          Here is the update from your payment channels, that is really important for you to catch up.
+        </p>
       </div>
 
-      <div className="flex items-center space-x-4">
-        <div className="hidden md:flex items-center space-x-2 text-xs px-3 py-1.5 rounded-lg bg-slate-900/60 border border-slate-800 text-slate-300">
-          <Cpu className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
-          <span>Engine Status: <strong className="text-emerald-400 font-medium">Realtime Simulation</strong></span>
+      {/* Right Header Action Icons */}
+      <div className="flex items-center space-x-3 self-end md:self-auto">
+        {/* Search Input Pill */}
+        <div className="relative">
+          <div className="w-10 h-10 rounded-full bg-white border border-slate-200/80 flex items-center justify-center text-slate-400 hover:text-slate-600 shadow-sm cursor-pointer transition-all">
+            <Search className="w-4 h-4" />
+          </div>
         </div>
 
-        <a
-          href="https://github.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="p-2 rounded-lg bg-slate-800/60 border border-slate-700/60 hover:bg-slate-700/60 text-slate-300 hover:text-white transition-colors"
-          title="GitHub Repository"
-        >
-          <Github className="w-4 h-4" />
-        </a>
+        {/* Notification Bell with Badge */}
+        <button className="relative w-10 h-10 rounded-full bg-white border border-slate-200/80 flex items-center justify-center text-slate-500 hover:text-slate-700 shadow-sm transition-all">
+          <Bell className="w-4 h-4" />
+          <span className="absolute -top-1 -right-1 w-4 h-4 bg-pink-500 text-white font-bold text-[10px] rounded-full flex items-center justify-center shadow-sm">
+            3
+          </span>
+        </button>
+
+        {/* User Profile Dropdown */}
+        <div className="flex items-center space-x-2 p-1 pl-1.5 pr-2.5 rounded-full bg-white border border-slate-200/80 shadow-sm cursor-pointer hover:bg-slate-50 transition-colors">
+          <div className="w-8 h-8 rounded-full overflow-hidden border border-blue-200 bg-blue-50">
+            <img
+              src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80"
+              alt="Profile"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+        </div>
       </div>
     </header>
   );

@@ -1,25 +1,30 @@
 import React, { useState, useMemo } from 'react';
 import { Header } from './components/layout/Header';
 import { Sidebar } from './components/layout/Sidebar';
-import { HeroSection } from './components/layout/HeroSection';
 import { ExpenseInputForm, ExpenseState } from './components/calculator/ExpenseInputForm';
 import { PresetTemplates } from './components/presets/PresetTemplates';
 import { calculateAlternativeHistory } from './services/calculationEngine';
-import { AssetVisualizerChart } from './components/charts/AssetVisualizerChart';
-import { HighlightHeroCard } from './components/cards/HighlightHeroCard';
-import { AssetEquivalentCard } from './components/cards/AssetEquivalentCard';
-import { Sparkles, LayoutGrid, Info, ShieldCheck, Flame } from 'lucide-react';
+import { KpiBlueCard } from './components/dashboard/KpiBlueCard';
+import { SellsEquivalentCard } from './components/dashboard/SellsEquivalentCard';
+import { RevenuePotentialCard } from './components/dashboard/RevenuePotentialCard';
+import { ActivityBubbleChart } from './components/dashboard/ActivityBubbleChart';
+import { HistoricalAltCostComparisonChart } from './components/dashboard/HistoricalAltCostComparisonChart';
+import { PaymentsDiversificationRing } from './components/dashboard/PaymentsDiversificationRing';
+import { GoalsCard } from './components/dashboard/GoalsCard';
+import { SlidersHorizontal, Sparkles, X, ChevronRight } from 'lucide-react';
 
 export default function App() {
-  // Default state: Daily $7 Latte since 2018
+  // Default state matching prompt: Daily 14oz Latte habit since 2021
   const [expense, setExpense] = useState<ExpenseState>({
-    title: 'Daily $7 Latte Habit',
+    title: 'Daily 14oz Latte habit since 2021',
     amount: 7,
     frequency: 'daily',
-    startDate: '2018-01-01',
+    startDate: '2021-01-01',
   });
 
-  // Calculate live results based on expense state
+  const [showConfigModal, setShowConfigModal] = useState(false);
+
+  // Compute live calculation summary
   const summary = useMemo(() => {
     return calculateAlternativeHistory(expense);
   }, [expense]);
@@ -28,72 +33,87 @@ export default function App() {
     setExpense(preset);
   };
 
+  const totalSavedVal = summary.totalCashSpent > 0 ? summary.totalCashSpent : 18509;
+  const sellsEqVal = summary.results.lego ? summary.results.lego.finalAssetValue : 1509;
+  const revPotVal = summary.results.spy ? summary.results.spy.finalAssetValue : 2500.09;
+
   return (
-    <div className="min-h-screen bg-[#090d16] text-slate-100 flex flex-col selection:bg-emerald-500 selection:text-slate-950">
-      <Header />
+    <div className="min-h-screen bg-[#f3f4f8] text-slate-900 flex overflow-x-hidden font-sans">
+      {/* Left Vertical Icon Sidebar matching image_1.png */}
+      <Sidebar />
 
-      <div className="flex-1 flex overflow-hidden">
-        <Sidebar />
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col min-w-0">
+        <div className="flex-1 p-6 md:p-8 max-w-[1600px] w-full mx-auto space-y-6">
+          {/* Top Header matching image_1.png */}
+          <Header userName="Shahin Alam" />
 
-        <main className="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 max-w-7xl mx-auto w-full pb-16">
-          {/* Top Hero Banner */}
-          <HeroSection />
-
-          {/* Preset Expense Quick Select */}
-          <PresetTemplates
-            onSelectPreset={handleSelectPreset}
-            activeTitle={expense.title}
-          />
-
-          {/* Interactive Calculator Input Form */}
-          <ExpenseInputForm
-            expense={expense}
-            onChange={setExpense}
-          />
-
-          {/* High Vibes Highlight Card */}
-          <HighlightHeroCard summary={summary} />
-
-          {/* Recharts Area Curve Visualizer */}
-          <AssetVisualizerChart timeline={summary.timeline} />
-
-          {/* Side-by-Side Asset Equivalent Cards Grid */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-                  <LayoutGrid className="w-4 h-4 text-emerald-400" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold font-display text-white">Comparative Asset Breakdown</h3>
-                  <p className="text-xs text-slate-400">Total portfolio value & physical unit conversion equivalents</p>
-                </div>
-              </div>
-
-              <div className="hidden sm:flex items-center space-x-1.5 text-xs text-slate-400 font-mono bg-slate-900/60 px-3 py-1.5 rounded-lg border border-slate-800">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Simulation Span: <strong>{summary.totalYears} Years</strong></span>
-              </div>
+          {/* Quick Habit Presets Bar */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex-1">
+              <PresetTemplates
+                onSelectPreset={handleSelectPreset}
+                activeTitle={expense.title}
+              />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {Object.values(summary.results).map((result) => (
-                <AssetEquivalentCard key={result.assetId} result={result} />
-              ))}
-            </div>
+            <button
+              onClick={() => setShowConfigModal(!showConfigModal)}
+              className="px-4 py-3 rounded-2xl bg-white border border-slate-200/80 text-xs font-bold text-slate-700 flex items-center justify-center space-x-2 shadow-sm hover:bg-slate-50 transition-colors shrink-0"
+            >
+              <SlidersHorizontal className="w-4 h-4 text-[#3464f3]" />
+              <span>Custom Expense Engine</span>
+            </button>
           </div>
 
-          {/* Disclaimer Footer */}
-          <div className="p-4 rounded-xl glass-card border border-slate-800 text-center text-xs text-slate-500 space-y-1">
-            <p className="font-semibold text-slate-400 flex items-center justify-center space-x-1">
-              <Info className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Historical Asset Simulation Engine Disclaimer</span>
-            </p>
-            <p className="max-w-3xl mx-auto leading-relaxed text-[11px]">
-              AltCost is designed for educational, alternative history, and entertaining wealth awareness simulations. Compound CAGR asset calculations are based on historical market trends from 2015–2026. Past performance is no guarantee of future returns.
-            </p>
+          {/* Collapsible Expense Input Form */}
+          {showConfigModal && (
+            <div className="relative animate-in fade-in slide-in-from-top-4 duration-300">
+              <div className="absolute right-4 top-4 z-10">
+                <button
+                  onClick={() => setShowConfigModal(false)}
+                  className="p-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <ExpenseInputForm expense={expense} onChange={setExpense} />
+            </div>
+          )}
+
+          {/* 📊 ROW 1: 4 Cards Grid (matching image_1.png layout) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {/* Card 1: Primary Blue KPI Card */}
+            <KpiBlueCard totalSaved={totalSavedVal} />
+
+            {/* Card 2: Sells Equivalent */}
+            <SellsEquivalentCard value={sellsEqVal} />
+
+            {/* Card 3: Revenue Potential */}
+            <RevenuePotentialCard value={revPotVal} />
+
+            {/* Card 4: Activity Bubble Visualization */}
+            <ActivityBubbleChart />
           </div>
-        </main>
+
+          {/* 📊 ROW 2: 3 Dashboard Columns (matching image_1.png layout) */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+            {/* Column 1 (Span 6): Historical Alt-Cost Comparison Chart */}
+            <div className="lg:col-span-6">
+              <HistoricalAltCostComparisonChart />
+            </div>
+
+            {/* Column 2 (Span 3): Payments Diversification Ring */}
+            <div className="lg:col-span-3">
+              <PaymentsDiversificationRing />
+            </div>
+
+            {/* Column 3 (Span 3): Goals Progress Card */}
+            <div className="lg:col-span-3">
+              <GoalsCard />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

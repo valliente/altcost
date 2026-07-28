@@ -1,7 +1,7 @@
 {
   "name": "altcost",
-  "version": "0.1.1",
-  "description": "Alternative History Asset Comparison Engine",
+  "version": "0.1.2",
+  "description": "Alternative History Asset Comparison Engine - UI Overhaul Update",
   "private": true,
   "type": "module",
   "main": "electron/main.cjs",
@@ -42,10 +42,6 @@
     "directories": {
       "output": "dist_electron"
     },
-    "files": [
-      "dist/**/*",
-      "electron/**/*"
-    ],
     "win": {
       "target": "nsis"
     },

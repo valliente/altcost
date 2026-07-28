@@ -1,14 +1,12 @@
 import React from 'react';
 import { 
-  BarChart3, 
-  Boxes, 
-  Watch, 
-  Flame, 
-  Coins, 
-  Bitcoin, 
-  Sparkles,
-  Zap,
-  Clock
+  Home, 
+  Layers, 
+  Wallet, 
+  PieChart, 
+  Calendar, 
+  Settings,
+  Sparkles
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -16,55 +14,64 @@ interface SidebarProps {
   setActiveTab?: (tab: string) => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = () => {
+export const Sidebar: React.FC<SidebarProps> = ({ activeTab = 'home', setActiveTab }) => {
+  const navItems = [
+    { id: 'home', icon: Home, label: 'Dashboard' },
+    { id: 'stack', icon: Layers, label: 'Benchmarks' },
+    { id: 'wallet', icon: Wallet, label: 'Expenses' },
+    { id: 'analytics', icon: PieChart, label: 'Analytics' },
+    { id: 'calendar', icon: Calendar, label: 'History' },
+  ];
+
   return (
-    <aside className="w-64 glass-card border-r border-slate-800/80 p-4 hidden lg:flex flex-col justify-between shrink-0 min-h-[calc(100vh-73px)]">
-      <div className="space-y-6">
-        <div>
-          <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wider px-3 mb-3">
-            Asset Benchmarks
-          </h2>
-          <nav className="space-y-1">
-            <div className="flex items-center space-x-3 px-3 py-2 rounded-lg bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-medium text-sm">
-              <BarChart3 className="w-4 h-4 text-emerald-400" />
-              <span>S&P 500 ($SPY)</span>
-            </div>
-            <div className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-slate-800/50 text-slate-300 font-medium text-sm transition-colors cursor-pointer">
-              <Boxes className="w-4 h-4 text-amber-400" />
-              <span>Vintage Lego Sets</span>
-            </div>
-            <div className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-slate-800/50 text-slate-300 font-medium text-sm transition-colors cursor-pointer">
-              <Watch className="w-4 h-4 text-cyan-400" />
-              <span>Luxury Rolex Watches</span>
-            </div>
-            <div className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-slate-800/50 text-slate-300 font-medium text-sm transition-colors cursor-pointer">
-              <Flame className="w-4 h-4 text-purple-400" />
-              <span>Sealed Trading Cards</span>
-            </div>
-            <div className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-slate-800/50 text-slate-300 font-medium text-sm transition-colors cursor-pointer">
-              <Coins className="w-4 h-4 text-yellow-400" />
-              <span>Physical Gold</span>
-            </div>
-            <div className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-slate-800/50 text-slate-300 font-medium text-sm transition-colors cursor-pointer">
-              <Bitcoin className="w-4 h-4 text-orange-400" />
-              <span>Bitcoin (BTC)</span>
-            </div>
-          </nav>
+    <aside className="w-20 bg-white border-r border-slate-200/70 flex flex-col items-center justify-between py-6 shrink-0 min-h-screen shadow-sm z-30">
+      {/* Top Logo Cluster */}
+      <div className="flex flex-col items-center space-y-8">
+        <div className="relative flex items-center justify-center w-11 h-11 rounded-2xl bg-[#3464f3] text-white shadow-lg shadow-blue-500/30 cursor-pointer transition-transform hover:scale-105">
+          {/* Custom 4-bubble cluster logo matching image_1.png */}
+          <div className="grid grid-cols-2 gap-1 p-1">
+            <div className="w-2 h-2 rounded-full bg-white" />
+            <div className="w-2 h-2 rounded-full bg-white opacity-80" />
+            <div className="w-2 h-2 rounded-full bg-white opacity-80" />
+            <div className="w-2 h-2 rounded-full bg-white" />
+          </div>
         </div>
 
-        <div className="p-3.5 rounded-xl bg-gradient-to-br from-purple-900/30 to-indigo-900/30 border border-purple-500/20">
-          <div className="flex items-center space-x-2 text-purple-300 font-semibold text-xs mb-1">
-            <Zap className="w-4 h-4 text-purple-400" />
-            <span>High-Vibes Mindset</span>
-          </div>
-          <p className="text-[11px] text-slate-400 leading-relaxed">
-            Redirecting just $7/day from guilt expenses into alternative collectibles or index funds can compound into major wealth.
-          </p>
-        </div>
+        {/* Navigation Icons */}
+        <nav className="flex flex-col items-center space-y-5">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeTab === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => setActiveTab && setActiveTab(item.id)}
+                title={item.label}
+                className={`relative w-11 h-11 rounded-xl flex items-center justify-center transition-all ${
+                  isActive
+                    ? 'bg-[#3464f3] text-white shadow-md shadow-blue-500/25'
+                    : 'text-slate-400 hover:text-slate-600 hover:bg-slate-100/80'
+                }`}
+              >
+                <Icon className="w-5 h-5" />
+                {isActive && (
+                  <span className="absolute -left-3 w-1 h-5 bg-[#3464f3] rounded-r-full" />
+                )}
+              </button>
+            );
+          })}
+        </nav>
       </div>
 
-      <div className="pt-4 border-t border-slate-800/80 text-center">
-        <p className="text-[10px] text-slate-400">AltCost Desktop & Web v1.0.0</p>
+      {/* Bottom Settings Icon */}
+      <div className="flex flex-col items-center space-y-4">
+        <button
+          onClick={() => setActiveTab && setActiveTab('settings')}
+          title="Settings"
+          className="w-11 h-11 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100/80 flex items-center justify-center transition-colors"
+        >
+          <Settings className="w-5 h-5" />
+        </button>
       </div>
     </aside>
   );
