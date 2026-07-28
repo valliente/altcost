@@ -120,6 +120,19 @@ export default function App() {
     localStorage.setItem(`${VERSION_KEY_PREFIX}goals`, JSON.stringify(customGoals));
   }, [customGoals]);
 
+  // Manage backdrop scrolling for full-screen modals
+  useEffect(() => {
+    const isModalOpen = !userProfile || showCustomAssetModal || showResetConfirmModal;
+    if (isModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [userProfile, showCustomAssetModal, showResetConfirmModal]);
+
   // Onboarding Complete Handler
   const handleCompleteOnboarding = useCallback((profile: UserProfile, initialExpense: ExpenseState | null) => {
     setUserProfile(profile);

@@ -61,6 +61,7 @@ export const ExpenseInputForm: React.FC<ExpenseInputFormProps> = ({ expense, onC
             onChange={handleTitleChange}
             placeholder="e.g. Daily Latte, DoorDash, Bar Tab"
             className="w-full glass-input px-4 py-2.5 rounded-xl text-sm text-white placeholder-slate-500"
+            autoFocus
           />
         </div>
 

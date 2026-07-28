@@ -209,6 +209,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onCompleteOn
                   onChange={(e) => setExpenseTitle(e.target.value)}
                   placeholder="e.g. Daily Coffee, DoorDash"
                   className="w-full px-3 py-2 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-900 outline-none"
+                  autoFocus
                 />
               </div>
 
