@@ -1,0 +1,6 @@
+{
+  "appId": "com.altcost.app",
+  "appName": "AltCost",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}

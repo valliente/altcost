@@ -1,7 +1,7 @@
 {
   "name": "altcost",
-  "version": "0.1.410",
-  "description": "Alternative History Asset Comparison Engine - Bug Fixes, Optimizations & Feature Release",
+  "version": "0.1.411",
+  "description": "Alternative History Asset Comparison Engine - Android APK & Optimization Release",
   "private": true,
   "type": "module",
   "main": "electron/main.js",
@@ -11,9 +11,13 @@
     "test": "vitest run --coverage",
     "preview": "vite preview",
     "electron": "electron .",
-    "dist": "npm run build && electron-builder"
+    "dist": "npm run build && electron-builder",
+    "cap:sync": "cap sync",
+    "cap:open:android": "cap open android"
   },
   "dependencies": {
+    "@capacitor/android": "^5.6.0",
+    "@capacitor/core": "^5.6.0",
     "clsx": "^2.1.1",
     "html2canvas": "^1.4.1",
     "lucide-react": "^0.474.0",
@@ -23,6 +27,7 @@
     "tailwind-merge": "^2.6.0"
   },
   "devDependencies": {
+    "@capacitor/cli": "^5.6.0",
     "@tailwindcss/vite": "^4.0.0",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/react": "^16.3.2",
@@ -47,7 +52,7 @@
   "build": {
     "appId": "com.altcost.app",
     "productName": "AltCost",
-    "artifactName": "AltCost-Setup-0.1.410.${ext}",
+    "artifactName": "AltCost-Setup-0.1.411.${ext}",
     "directories": {
       "output": "dist_electron"
     },

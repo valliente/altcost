@@ -1,6 +1,5 @@
 import React, { useState, useMemo, memo } from 'react';
 import {
-  ResponsiveContainer,
   AreaChart,
   Area,
   XAxis,
@@ -11,6 +10,7 @@ import {
 import { TimelinePoint } from '../../services/calculationEngine';
 import { ASSET_MODELS } from '../../data/assetDataModel';
 import { Eye, EyeOff, LineChart as ChartIcon } from 'lucide-react';
+import { SafeRechartsWrapper } from '../common/SafeRechartsWrapper';
 
 interface AssetVisualizerChartProps {
   timeline: TimelinePoint[];
@@ -112,7 +112,7 @@ export const AssetVisualizerChart: React.FC<AssetVisualizerChartProps> = memo(({
 
       {/* Optimized Responsive Chart Canvas */}
       <div className="h-80 w-full min-w-0 pt-2">
-        <ResponsiveContainer width="100%" height="100%" minWidth={0}>
+        <SafeRechartsWrapper width="100%" height="100%" minWidth={0}>
           <AreaChart data={timeline} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
             <defs>
               {assetSeriesConfigs.map((series) => (
@@ -157,7 +157,7 @@ export const AssetVisualizerChart: React.FC<AssetVisualizerChartProps> = memo(({
               )
             ))}
           </AreaChart>
-        </ResponsiveContainer>
+        </SafeRechartsWrapper>
       </div>
     </div>
   );

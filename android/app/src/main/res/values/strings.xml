@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">AltCost</string>
+    <string name="title_activity_main">AltCost</string>
+    <string name="package_name">com.altcost.app</string>
+    <string name="custom_url_scheme">com.altcost.app</string>
+</resources>

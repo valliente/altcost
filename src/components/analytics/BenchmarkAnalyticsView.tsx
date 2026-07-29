@@ -3,6 +3,7 @@ import html2canvas from 'html2canvas';
 import { CalculationSummary } from '../../services/calculationEngine';
 import { ASSET_MODELS } from '../../data/assetDataModel';
 import { MonteCarloVisualizerCard } from './MonteCarloVisualizerCard';
+import { SafeRechartsWrapper } from '../common/SafeRechartsWrapper';
 import { 
   BarChart3, 
   Boxes, 
@@ -16,7 +17,6 @@ import {
   Download
 } from 'lucide-react';
 import {
-  ResponsiveContainer,
   AreaChart,
   Area,
   XAxis,
@@ -162,7 +162,7 @@ export const BenchmarkAnalyticsView: React.FC<BenchmarkAnalyticsViewProps> = ({
 
         {/* Recharts Multi-Asset Area Chart */}
         <div className="h-72 w-full min-w-0 pt-2">
-          <ResponsiveContainer width="100%" height="100%" minWidth={0}>
+          <SafeRechartsWrapper width="100%" height="100%" minWidth={0}>
             <AreaChart data={summary ? summary.timeline : []} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <defs>
                 {assetList.map(asset => (
@@ -195,7 +195,7 @@ export const BenchmarkAnalyticsView: React.FC<BenchmarkAnalyticsViewProps> = ({
               {visibleLines.gold && <Area type="monotone" dataKey="goldValue" name="Gold" stroke={ASSET_MODELS.gold.color} fillOpacity={1} fill={`url(#color-gold)`} strokeWidth={2.5} dot={false} activeDot={{ r: 5, fill: ASSET_MODELS.gold.color, stroke: '#fff', strokeWidth: 2 }} />}
               {visibleLines.btc && <Area type="monotone" dataKey="btcValue" name="Bitcoin" stroke={ASSET_MODELS.btc.color} fillOpacity={1} fill={`url(#color-btc)`} strokeWidth={2.5} dot={false} activeDot={{ r: 5, fill: ASSET_MODELS.btc.color, stroke: '#fff', strokeWidth: 2 }} />}
             </AreaChart>
-          </ResponsiveContainer>
+          </SafeRechartsWrapper>
         </div>
       </div>
 
