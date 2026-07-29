@@ -24,7 +24,7 @@ import { useTheme } from './hooks/useTheme';
 import { useDebouncedLocalStorage } from './hooks/useDebouncedLocalStorage';
 import { SlidersHorizontal, X, RotateCcw, AlertTriangle, Trash2 } from 'lucide-react';
 
-const VERSION_KEY_PREFIX = 'altcost_v0.1.411_';
+const VERSION_KEY_PREFIX = 'altcost_v0.1.412_';
 
 export default function App() {
   const { theme, toggleTheme } = useTheme();
@@ -191,7 +191,7 @@ export default function App() {
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `altcost_v0.1.411_backup_${new Date().toISOString().slice(0, 10)}.json`;
+      link.download = `altcost_v0.1.412_backup_${new Date().toISOString().slice(0, 10)}.json`;
       link.click();
     } else {
       let csv = 'Title,Amount,Frequency,StartDate,CreatedAt,Status\n';
@@ -202,7 +202,7 @@ export default function App() {
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `altcost_v0.1.411_habits_${new Date().toISOString().slice(0, 10)}.csv`;
+      link.download = `altcost_v0.1.412_habits_${new Date().toISOString().slice(0, 10)}.csv`;
       link.click();
     }
   }, [userProfile, expense, historyLogs, customAssets, customGoals]);
@@ -277,7 +277,7 @@ export default function App() {
                 </div>
                 <div>
                   <h4 className="font-bold text-slate-900 text-base font-display">Database Inspector</h4>
-                  <p className="text-xs text-slate-500">v0.1.411 Isolated Storage</p>
+                  <p className="text-xs text-slate-500">v0.1.412 Isolated Storage</p>
                 </div>
               </div>
               <button onClick={() => setShowResetConfirmModal(false)} className="text-slate-400 hover:text-slate-600">

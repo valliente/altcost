@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1785317694971" clover="3.2.0">
-  <project timestamp="1785317694971" name="All files">
+<coverage generated="1785318588545" clover="3.2.0">
+  <project timestamp="1785318588545" name="All files">
     <metrics statements="3815" coveredstatements="747" conditionals="153" coveredconditionals="89" methods="74" coveredmethods="26" elements="4042" coveredelements="862" complexity="0" loc="3815" ncloc="3815" packages="18" files="38" classes="38"/>
     <package name="android.app.src.main.assets.public">
       <metrics statements="0" coveredstatements="0" conditionals="2" coveredconditionals="2" methods="2" coveredmethods="2"/>
